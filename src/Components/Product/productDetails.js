@@ -84,6 +84,14 @@ import official5 from '../../Assets/Official/official5.jpg';
 import official6 from '../../Assets/Official/official6.jpg';
 import official7 from '../../Assets/Official/official7.jpg';
 import official8 from '../../Assets/Official/official8.jpg';
+import Official9 from '../../Assets/Official/official9.jpg';
+import Official10 from '../../Assets/Official/official10.jpg';
+import Official11 from '../../Assets/Official/official11.jpg';
+import Official12 from '../../Assets/Official/official12.jpg';
+import Official13 from '../../Assets/Official/official13.jpg';
+import Official14 from '../../Assets/Official/official14.jpg';
+import Official15 from '../../Assets/Official/official15.jpg';
+import Official16 from '../../Assets/Official/official16.jpg';
 
 //jeans
 import Jean1 from '../../Assets/Jeans/jean1.jpeg';
@@ -98,6 +106,11 @@ import Jean9 from '../../Assets/Jeans/jean9.jpg';
 import Jean10 from '../../Assets/Jeans/jean10.jpg';   // Ensure this import is present
 import Jean11 from '../../Assets/Jeans/jean11.jpg';
 import Jean12 from '../../Assets/Jeans/jean12.jpg';
+import Jean13 from '../../Assets/Jeans/jean13.jpg';
+import Jean14 from '../../Assets/Jeans/jean14.jpg';
+import Jean15 from '../../Assets/Jeans/jean15.jpg';
+import Jean16 from '../../Assets/Jeans/jean16.jpg';
+
 
 //jackets
 import Jacket1 from '../../Assets/Jackets/jacket1.jpg';
@@ -106,10 +119,40 @@ import Jacket3 from '../../Assets/Jackets/jacket3.jpg';
 import Jacket4 from '../../Assets/Jackets/jacket4.webp';
 
 //Belt
+import Belt1 from '../../Assets/Accessories/belt1.jpg';
+import Belt2 from '../../Assets/Accessories/belt2.jpg';
+import Belt3 from '../../Assets/Accessories/belt3.jpg';
+import Belt4 from '../../Assets/Accessories/belt4.jpg';
 import Belt5 from '../../Assets/Accessories/belt5.jpg';
 import Belt6 from '../../Assets/Accessories/belt6.jpg';
 import Belt7 from '../../Assets/Accessories/belt7.jpg';
 import Belt8 from '../../Assets/Accessories/belt8.jpg';
+
+//Cassual
+import Cassual1 from '../../Assets/Cassual/cassual1.jpg';
+import Cassual2 from '../../Assets/Cassual/cassual2.jpg';
+import Cassual3 from '../../Assets/Cassual/cassual3.jpg';
+
+//socks
+import Socks1 from '../../Assets/Accessories/socks1.jpg';
+import Socks2 from '../../Assets/Accessories/socks2.jpg';
+import Socks3 from '../../Assets/Accessories/socks3.jpg';
+
+//Ties
+import Tie1 from '../../Assets/Ties/tie1.jpg';
+import Tie2 from '../../Assets/Ties/tie2.jpg';
+import Tie3 from '../../Assets/Ties/tie3.jpg';
+import Tie4 from '../../Assets/Ties/tie4.jpg';
+import Tie5 from '../../Assets/Ties/tie5.jpg';
+import Tie6 from '../../Assets/Ties/tie6.jpg';
+import Tie7 from '../../Assets/Ties/tie7.jpg';
+import Tie8 from '../../Assets/Ties/tie8.jpg';
+import Tie9 from '../../Assets/Ties/tie9.jpg';
+import Tie10 from '../../Assets/Ties/tie10.jpg';
+import Tie11 from '../../Assets/Ties/tie11.jpg';
+import Tie12 from '../../Assets/Ties/tie12.jpg';
+
+
 
 
 /* ========================================================================
@@ -288,38 +331,81 @@ const products = [
 { id: 59, name: 'Presidential Shirt', price: 3000, description: '💥A Presidential Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official2 },
 { id: 60, name: 'Presidential Shirt', price: 3000, description: '💥A Presidential Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official3 },
 { id: 61, name: 'Presidential Shirt', price: 3000, description: '💥A Presidential Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official4 },
-{ id: 62, name: 'Presidential Shirt', price: 3000, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official5 },
-{ id: 63, name: 'Presidential Shirt', price: 3000, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official6 },
-{ id: 64, name: 'Presidential Shirt', price: 3000, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official7 },
-{ id: 65, name: 'Presidential Shirt', price: 3000, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official8 },
+{ id: 62, name: 'French Cuff Shirt', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official5 },
+{ id: 63, name: 'Slim Fit Shirt', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official6 },
+{ id: 64, name: 'Double Cuff Shirt', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official7 },
+{ id: 65, name: 'Designer Collar Shirt', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: official8 },
+{ id: 66, name: 'Executive Checkered Shirt', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official9 },
+{ id: 67, name: 'Silk Blend Formal', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official10 },
+{ id: 68, name: 'Premium Twill Shirt', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official11 },
+{ id: 69, name: 'Classic Spread Collar', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official12},
+{ id: 70, name: 'Luxury Official Shirt', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official13},
+{ id: 71, name: 'Sophistic Official Shirt', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official14 },
+{ id: 72, name: 'Classic Official Shirt', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official15 },
+{ id: 73, name: 'Exclusive Official Shirt', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official16},
+
  
 //jeans
-{ id: 66, name: 'Slim Fit Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean1 },
-{ id: 67, name: 'Vintage Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean2 },
-{ id: 68, name: 'Ripped Skinny Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean3},
-{ id: 69, name: 'Classic Straight Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean4 },
-{ id: 70, name: 'High Super Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean5 },
-{ id: 71, name: 'Black Stretch Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean6 },
-{ id: 72, name: 'Classic Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean7 },
-{ id: 73, name: 'Tapered Cargo Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean8 },
-{ id: 74, name: '💯Flare Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean9 },
-{ id: 75, name: 'Selvedge Denim Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean10 },
-{ id: 76, name: '💯 Super Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean11 },
-{ id: 77, name: 'Stretch Skinny Fit Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean12 },
+{ id: 74, name: 'Slim Fit Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean1 },
+{ id: 75, name: 'Vintage Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean2 },
+{ id: 76, name: 'Ripped Skinny Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean3},
+{ id: 77, name: 'Classic Straight Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean4 },
+{ id: 78, name: 'High Super Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean5 },
+{ id: 79, name: 'Black Stretch Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean6 },
+{ id: 80, name: 'Classic Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean7 },
+{ id: 81, name: 'Tapered Cargo Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean8 },
+{ id: 82, name: '💯Flare Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean9 },
+{ id: 83, name: 'Selvedge Denim Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean10 },
+{ id: 84, name: '💯 Super Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean11 },
+{ id: 85, name: 'Stretch Skinny Fit Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean12 },
+{ id: 86, name: 'Mid Wash Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean12 },
+{ id: 87, name: 'Slim Fit Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean12 },
+{ id: 88, name: 'Premium Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean12 },
+{ id: 89, name: 'Dark Blue Jean', price: 2000, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jeans', image: Jean12 },
+
 
 
 //jacket
-{ id: 78, name: '🔥Leather Jacket - Classic', price: 3500, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jacket', image: Jacket1 },
-{ id: 79, name: '🔥Leather Jacket - Premium', price: 3500, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jacket', image: Jacket2 },
-{ id: 80, name: '🔥Leather Jacket - Modern Fit', price: 3500, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jacket', image: Jacket3 },
-{ id: 81, name: '🔥Leather Jacket - Elegant Fit', price: 3500, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jacket', image: Jacket4},
+{ id: 90, name: '🔥Leather Jacket - Classic', price: 3500, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jacket', image: Jacket1 },
+{ id: 91, name: '🔥Leather Jacket - Premium', price: 3500, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jacket', image: Jacket2 },
+{ id: 92, name: '🔥Leather Jacket - Modern Fit', price: 3500, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jacket', image: Jacket3 },
+{ id: 93, name: '🔥Leather Jacket - Elegant Fit', price: 3500, description: '🔥 Versatile: Ideal for any occasion—whether it’s a casual day out or a night on the town.', category: 'Jacket', image: Jacket4},
 
 
 //suits
-{ id: 82, name: '🔥Belt - Elegant Fit', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt5},
-{ id: 83, name: '🔥Belt - Elegant Fit', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt6},
-{ id: 84, name: '🔥Belt - Elegant Fit', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt7},
-{ id: 85, name: '🔥Belt - Elegant Fit', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt8},
+{ id: 94, name: '🔥Premium Leather Belt', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt1},
+{ id: 95, name: '🔥Premium Black Belt', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt2},
+{ id: 96, name: '🔥Premium Leather Belt', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt3},
+{ id: 97, name: '🔥Premium Leather Belt', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt4},
+{ id: 98, name: '🔥Premium Leather Belt', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt5},
+{ id: 99, name: '🔥Premium Leather Belt', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt6},
+{ id: 100, name: '🔥Stylish Brown Belt', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt7},
+{ id: 101, name: '🔥Elegant Black Belt', price: 2000, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Belt8},
+
+//Cassual
+{ id: 102, name: '🔥Urban Streetwear Shirt', price: 1700, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Cassual1},
+{ id: 103, name: '🔥Designer Denim Casual', price: 1700, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Cassual2},
+{ id: 104, name: '🔥Premium Linen Blend', price: 1700, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Belt', image: Cassual3},
+
+//Socks
+{ id: 105, name: '🔥Cotton Socks', price: 300, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Socks', image: Socks1},
+{ id: 106, name: '🔥Formal Dress Sock', price: 300, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Socks', image: Socks2},
+{ id: 107, name: '🔥Colorful Crew Socks', price: 300, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Socks', image: Socks3},
+
+//Ties 
+{ id: 108, name: '🔥Silk Business Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie1},
+{ id: 109, name: '🔥Patterned Formal Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie2},
+{ id: 110, name: '🔥Classic Windsor Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie3},
+{ id: 111, name: '🔥Executive Striped Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie4},
+{ id: 112, name: '🔥Luxury Silk Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie5},
+{ id: 113, name: '🔥Modern Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie6},
+{ id: 114, name: '🔥Bold Color Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie7},
+{ id: 115, name: '🔥Knit Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie8},
+{ id: 116, name: '🔥Designer Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie9},
+{ id: 117, name: '🔥Glamorous Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie10},
+{ id: 118, name: '🔥Classic Necktie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie11},
+{ id: 119, name: '🔥Formal Tie', price: 800, description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.', category: 'Ties', image: Tie12},
+
 
 
 ];
@@ -339,7 +425,9 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [sizes, setSizes] = useState({});
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [timeoutId, setTimeoutId] = useState(null);
 
   // Scroll to top when product changes
   useEffect(() => {
@@ -350,21 +438,62 @@ const ProductDetail = () => {
     const numericId = Number(id);
     const p = products.find((p) => p.id === numericId);
     setProduct(p || null);
-
-    setSizes((prev) => ({ ...prev }));
   }, [id]);
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [timeoutId]);
 
   if (!product) return <div className="p-4 text-center">Loading...</div>;
 
+  const handleSizeSelection = (productId, size) => {
+    // Clear any existing timeout
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    // If selecting a size for a different product, clear the previous selection
+    if (selectedProductId && selectedProductId !== productId) {
+      setSelectedSize(null);
+      setSelectedProductId(null);
+    }
+
+    // Set the new selection
+    setSelectedSize(size);
+    setSelectedProductId(productId);
+
+    // Set timeout to automatically clear the selection after 30 seconds
+    const newTimeoutId = setTimeout(() => {
+      setSelectedSize(null);
+      setSelectedProductId(null);
+    }, 30000); // 30 seconds
+
+    setTimeoutId(newTimeoutId);
+  };
+
   const handlePurchase = (item) => {
-    const itemSize = sizes[item.id] || null;
+    const itemSize = selectedProductId === item.id ? selectedSize : null;
     setSelectedItem({ ...item, size: itemSize });
     setShowPayment(true);
-    setSizes((prev) => ({ ...prev, [item.id]: null }));
+    
+    // Clear timeout
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      setTimeoutId(null);
+    }
+    
+    // Reset selection
+    setSelectedSize(null);
+    setSelectedProductId(null);
   };
 
   const handleAddToCart = (item) => {
-    const itemSize = sizes[item.id] || null;
+    const itemSize = selectedProductId === item.id ? selectedSize : null;
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     const newItem = {
       ...item,
@@ -374,7 +503,16 @@ const ProductDetail = () => {
     localStorage.setItem('cart', JSON.stringify([...storedCart, newItem]));
     window.dispatchEvent(new Event('storage'));
     alert(`${item.name}${itemSize ? ` (Size ${itemSize})` : ''} added to cart`);
-    setSizes((prev) => ({ ...prev, [item.id]: null }));
+    
+    // Clear timeout
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      setTimeoutId(null);
+    }
+    
+    // Reset selection
+    setSelectedSize(null);
+    setSelectedProductId(null);
   };
 
   const similarProducts = (() => {
@@ -383,6 +521,14 @@ const ProductDetail = () => {
       let primary = products.filter((p) => p.category === 'Belt' && p.id !== excludeId).slice(0, 8);
       if (primary.length < 8) {
         const filler = products.filter((p) => p.category !== 'Belt' && p.id !== excludeId).slice(0, 8 - primary.length);
+        primary = [...primary, ...filler];
+      }
+      return primary.slice(0, 8);
+    }
+      if (product.category === 'Cassual Shirt') {
+      let primary = products.filter((p) => p.category === 'Official Shirt' && p.id !== excludeId).slice(0, 8);
+      if (primary.length < 8) {
+        const filler = products.filter((p) => p.category !== 'Official Shirt' && p.id !== excludeId).slice(0, 8 - primary.length);
         primary = [...primary, ...filler];
       }
       return primary.slice(0, 8);
@@ -486,15 +632,20 @@ const ProductDetail = () => {
                 {suitSizes.map((size) => (
                   <button
                     key={size}
-                    onClick={() => setSizes((prev) => ({ ...prev, [product.id]: size }))} 
+                    onClick={() => handleSizeSelection(product.id, size)}
                     className={`px-4 py-2 rounded-lg border font-semibold whitespace-nowrap transition ${
-                      sizes[product.id] === size ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 hover:bg-gray-200 border-gray-300'
+                      selectedProductId === product.id && selectedSize === size ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 hover:bg-gray-200 border-gray-300'
                     }`}
                   >
                     {size}
                   </button>
                 ))}
               </div>
+              {selectedProductId === product.id && selectedSize && (
+                <p className="text-sm text-gray-500 mt-2">
+                  Size {selectedSize} selected. Will auto-clear in 30 seconds.
+                </p>
+              )}
             </div>
           )}
 
@@ -546,9 +697,9 @@ const ProductDetail = () => {
                     {suitSizes.map((size) => (
                       <button
                         key={size}
-                        onClick={() => setSizes((prev) => ({ ...prev, [item.id]: size }))}
+                        onClick={() => handleSizeSelection(item.id, size)}
                         className={`px-3 py-1 rounded-md border font-semibold whitespace-nowrap transition ${
-                          sizes[item.id] === size ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 hover:bg-gray-200 border-gray-300'
+                          selectedProductId === item.id && selectedSize === size ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 hover:bg-gray-200 border-gray-300'
                         }`}
                       >
                         {size}
@@ -586,5 +737,3 @@ const ProductDetail = () => {
 };
 
 export default ProductDetail;
-
-

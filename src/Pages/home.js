@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, ChevronRight, ShoppingCart, XCircle, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Import all images as needed
 import Photo1 from '../Assets/Appolo/photo1.jpeg';
 import Photo2 from '../Assets/Appolo/photo2.jpeg';
 import Photo3 from '../Assets/Appolo/photo3.jpeg';
@@ -74,6 +73,14 @@ import Official5 from '../Assets/Official/official5.jpg';
 import Official6 from '../Assets/Official/official6.jpg';
 import Official7 from '../Assets/Official/official7.jpg';
 import Official8 from '../Assets/Official/official8.jpg';
+import Official9 from '../Assets/Official/official9.jpg';
+import Official10 from '../Assets/Official/official10.jpg';
+import Official11 from '../Assets/Official/official11.jpg';
+import Official12 from '../Assets/Official/official12.jpg';
+import Official13 from '../Assets/Official/official13.jpg';
+import Official14 from '../Assets/Official/official14.jpg';
+import Official15 from '../Assets/Official/official15.jpg';
+import Official16 from '../Assets/Official/official16.jpg';
 
 import Jean1 from '../Assets/Jeans/jean1.jpeg';
 import Jean2 from '../Assets/Jeans/jean2.jpeg';
@@ -87,16 +94,26 @@ import Jean9 from '../Assets/Jeans/jean9.jpg';
 import jean10 from '../Assets/Jeans/jean10.jpg';
 import Jean11 from '../Assets/Jeans/jean11.jpg';
 import Jean12 from '../Assets/Jeans/jean12.jpg';
+import Jean13 from '../Assets/Jeans/jean13.jpg';
+import Jean14 from '../Assets/Jeans/jean14.jpg';
+import Jean15 from '../Assets/Jeans/jean15.jpg';
+import Jean16 from '../Assets/Jeans/jean16.jpg';
+
 
 import Jacket1 from '../Assets/Jackets/jacket1.jpg';
 import Jacket2 from '../Assets/Jackets/jacket2.jpg';
 import Jacket3 from '../Assets/Jackets/jacket3.jpg';
 import Jacket4 from '../Assets/Jackets/jacket4.webp';
 
+import Belt1 from '../Assets/Accessories/belt1.jpg';
+import Belt2 from '../Assets/Accessories/belt2.jpg';
+import Belt3 from '../Assets/Accessories/belt3.jpg';
+import Belt4 from '../Assets/Accessories/belt4.jpg';
 import Belt5 from '../Assets/Accessories/belt5.jpg';
 import Belt6 from '../Assets/Accessories/belt6.jpg';
 import Belt7 from '../Assets/Accessories/belt7.jpg';
 import Belt8 from '../Assets/Accessories/belt8.jpg';
+
 
 const Home = () => {
   const [cartCount, setCartCount] = useState(0);
@@ -107,12 +124,28 @@ const Home = () => {
   const [hoveredItemId, setHoveredItemId] = useState(null);
   const [sizeError, setSizeError] = useState({});
   const [showSizeAlert, setShowSizeAlert] = useState(false);
+  const [lastSelectedItemId, setLastSelectedItemId] = useState(null);
+  const [recentlySelectedSize, setRecentlySelectedSize] = useState({});
 
   const Sizes = ['44', '46', '48', '50', '52', '54', '56', '58', '60'];
 
   // Check if item requires size selection
   const requiresSize = (item) => {
     return item.category !== 'jeans' && item.category !== 'jacket' && item.category !== 'belt' && item.category !== 'shirt';
+  };
+
+  // Handle size selection - only allow one item to have a selected size at a time
+  const handleSizeSelection = (itemId, size) => {
+    // Clear all previous selections and set only this item's size
+    setSelectedSizeForSuit({ [itemId]: size });
+    setLastSelectedItemId(itemId);
+    setSizeError(prev => ({ ...prev, [itemId]: false }));
+    
+    // Set the recently selected size with a timer to clear it
+    setRecentlySelectedSize({ [itemId]: true });
+    setTimeout(() => {
+      setRecentlySelectedSize(prev => ({ ...prev, [itemId]: false }));
+    }, 2000); // Highlight disappears after 2 seconds
   };
 
   // Handle adding to cart
@@ -124,12 +157,6 @@ const Home = () => {
       setSizeError(prev => ({ ...prev, [item.id]: true }));
       setShowSizeAlert(true);
       setTimeout(() => setShowSizeAlert(false), 3000);
-      
-      // Highlight the size selection container
-      // Also, automatically reset the highlight after 3 seconds
-      setTimeout(() => {
-        setSizeError(prev => ({ ...prev, [item.id]: false }));
-      }, 3000);
       return;
     }
     
@@ -143,8 +170,9 @@ const Home = () => {
     window.dispatchEvent(new Event('storage'));
     alert(`${item.name} added to cart`);
     
-    // Reset the size for this specific item
-    setSelectedSizeForSuit(prev => ({ ...prev, [item.id]: undefined }));
+    // Clear the size selection after adding to cart
+    setSelectedSizeForSuit({});
+    setLastSelectedItemId(null);
     setSizeError(prev => ({ ...prev, [item.id]: false }));
   };
 
@@ -157,11 +185,6 @@ const Home = () => {
       setSizeError(prev => ({ ...prev, [item.id]: true }));
       setShowSizeAlert(true);
       setTimeout(() => setShowSizeAlert(false), 3000);
-      
-      // Highlight the size selection container
-      setTimeout(() => {
-        setSizeError(prev => ({ ...prev, [item.id]: false }));
-      }, 3000);
       return;
     }
     
@@ -184,8 +207,7 @@ const Home = () => {
     return () => window.removeEventListener('storage', updateCart);
   }, []);
   
-  // Data arrays for products
-  const threePieceSuits = [
+ const threePieceSuits = [
     { id: 1, name: 'Executive Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo1, price: 13000, category: 'three-piece' },
     { id: 2, name: 'Elegance Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo2, price: 13000, category: 'three-piece' },
     { id: 3, name: 'Premium Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo3, price: 13000, category: 'three-piece' },
@@ -254,43 +276,60 @@ const Home = () => {
   ];
 
   const officialShirts = [
-    { id: 58, name: 'Presidential Shirt⭐⭐⭐⭐⭐', image: Official1, price: 3000, category: 'shirt' },
-    { id: 59, name: 'Presidential Shirt⭐⭐⭐⭐⭐', image: Official2, price: 3000, category: 'shirt' },
-    { id: 60, name: 'Presidential Shirt⭐⭐⭐⭐⭐', image: Official3, price: 3000, category: 'shirt' },
-    { id: 61, name: 'Presidential Shirt⭐⭐⭐⭐⭐', image: Official4, price: 3000, category: 'shirt' },
-    { id: 62, name: 'French Cuff Formal⭐⭐⭐⭐⭐', image: Official5, price: 1800, category: 'shirt' },
-    { id: 63, name: 'Slim Fit Office Shirt⭐⭐⭐⭐⭐', image: Official6, price: 1800, category: 'shirt' },
-    { id: 64, name: 'Double Cuff Business⭐⭐⭐⭐⭐', image: Official7, price: 1800, category: 'shirt' },
-    { id: 65, name: 'Designer Collar Shirt⭐⭐⭐⭐⭐', image: Official8, price: 1800, category: 'shirt' },
+    { id: 58, name: 'Presidential Shirt⭐⭐⭐⭐⭐', price: 3000, description: '💥A Presidential Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official1 },
+    { id: 59, name: 'Presidential Shirt⭐⭐⭐⭐⭐', price: 3000, description: '💥A Presidential Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official2 },
+    { id: 60, name: 'Presidential Shirt⭐⭐⭐⭐⭐', price: 3000, description: '💥A Presidential Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official3 },
+    { id: 61, name: 'Presidential Shirt⭐⭐⭐⭐⭐', price: 3000, description: '💥A Presidential Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official4 },
+    { id: 62, name: 'French Cuff Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official5 },
+    { id: 63, name: 'Slim Fit Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official6 },
+    { id: 64, name: 'Double Cuff Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official7 },
+    { id: 65, name: 'Designer Collar Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official8 },
+    { id: 66, name: 'Executive Checkered Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official9 },
+    { id: 67, name: 'Silk Blend Formal⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official10 },
+    { id: 68, name: 'Premium Twill Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official11 },
+    { id: 69, name: 'Classic Spread Collar⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official12},
+    { id: 70, name: 'Luxury Official Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official13},
+    { id: 71, name: 'Sophistic Official Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official14 },
+    { id: 72, name: 'Classic Official Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official15 },
+    { id: 73, name: 'Exclusive Official Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official16},
+    
   ];
 
   const jeans = [
-    { id: 66, name: 'Slim Fit jean 👖', image: Jean1, price: 2000, category: 'jeans' },
-    { id: 67, name: 'Vintage Jean👖', image: Jean2, price: 2000, category: 'jeans' },
-    { id: 68, name: 'Ripped Skinny Jean👖', image: Jean3, price: 2000, category: 'jeans' },
-    { id: 69, name: 'Classic Straight Leg👖', image: Jean4, price: 2000, category: 'jeans' },
-    { id: 70, name: 'High Super Jean👖', image: Jean5, price: 2000, category: 'jeans' },
-    { id: 71, name: 'Black Stretch jean👖', image: Jean6, price: 2000, category: 'jeans' },
-    { id: 72, name: 'Classic Jean👖', image: Jean7, price: 2000, category: 'jeans' },
-    { id: 73, name: 'Tapered Cargo Jeans👖', image: Jean8, price: 2000, category: 'jeans' },
-    { id: 74, name: '💯Flare Jeans👖', image: Jean9, price: 2000, category: 'jeans' },
-    { id: 75, name: 'Selvedge Denim👖', image: jean10, price: 2000, category: 'jeans' },
-    { id: 76, name: '💯 Super Jean👖', image: Jean11, price: 2000, category: 'jeans' },
-    { id: 77, name: 'Stretch Skinny Fit👖', image: Jean12, price: 2000, category: 'jeans' },
+    { id: 74, name: 'Slim Fit jean 👖', image: Jean1, price: 2000, category: 'jeans' },
+    { id: 75, name: 'Vintage Jean👖', image: Jean2, price: 2000, category: 'jeans' },
+    { id: 76, name: 'Ripped Skinny Jean👖', image: Jean3, price: 2000, category: 'jeans' },
+    { id: 77, name: 'Classic Straight Leg👖', image: Jean4, price: 2000, category: 'jeans' },
+    { id: 78, name: 'High Super Jean👖', image: Jean5, price: 2000, category: 'jeans' },
+    { id: 79, name: 'Black Stretch jean👖', image: Jean6, price: 2000, category: 'jeans' },
+    { id: 80, name: 'Classic Jean👖', image: Jean7, price: 2000, category: 'jeans' },
+    { id: 81, name: 'Tapered Cargo Jeans👖', image: Jean8, price: 2000, category: 'jeans' },
+    { id: 82, name: '💯Flare Jeans👖', image: Jean9, price: 2000, category: 'jeans' },
+    { id: 83, name: 'Selvedge Denim👖', image: jean10, price: 2000, category: 'jeans' },
+    { id: 84, name: '💯 Super Jean👖', image: Jean11, price: 2000, category: 'jeans' },
+    { id: 85, name: 'Stretch Skinny Fit👖', image: Jean12, price: 2000, category: 'jeans' },
+    { id: 86, name: 'Mid Wash Denim Fit👖', image: Jean13, price: 2000, category: 'jeans' },
+    { id: 87, name: 'Slim Fit Jogger👖', image: Jean14, price: 2000, category: 'jeans' },
+    { id: 88, name: 'Premium Jeans👖', image: Jean15, price: 2000, category: 'jeans' },
+    { id: 89, name: 'Dark Blue Jean👖', image: Jean16, price: 2000, category: 'jeans' },
   ];
 
   const leatherJackets = [
-    { id: 78, name: '🔥Leather Jacket - Classic', image: Jacket1, price: 3500, category: 'jacket' },
-    { id: 79, name: '🔥Leather Jacket - Premium', image: Jacket2, price: 3500, category: 'jacket' },
-    { id: 80, name: '🔥Leather Jacket - Modern Fit', image: Jacket3, price: 3500, category: 'jacket' },
-    { id: 81, name: '🔥Leather Jacket - Elegant Fit', image: Jacket4, price: 3500, category: 'jacket' },
+    { id: 90, name: '🔥Leather Jacket - Classic', image: Jacket1, price: 3500, category: 'jacket' },
+    { id: 91, name: '🔥Leather Jacket - Premium', image: Jacket2, price: 3500, category: 'jacket' },
+    { id: 92, name: '🔥Leather Jacket - Modern Fit', image: Jacket3, price: 3500, category: 'jacket' },
+    { id: 93, name: '🔥Leather Jacket - Elegant Fit', image: Jacket4, price: 3500, category: 'jacket' },
   ];
 
   const belts = [
-    { id: 82, name: '💯Premium Leather Belt', image: Belt5, price: 2000, category: 'belt' },
-    { id: 83, name: '💯Premium Leather Belt', image: Belt6, price: 2000, category: 'belt' },
-    { id: 84, name: '💯Stylish Brown Belt', image: Belt7, price: 2000, category: 'belt' },
-    { id: 85, name: '💯Elegant Black Belt', image: Belt8, price: 2000, category: 'belt' },
+    { id: 94, name: '💯Premium Leather Belt', image: Belt1, price: 2000, category: 'belt' },
+{ id: 95, name: '💯Premium Leather Belt', image: Belt2, price: 2000, category: 'belt' },
+{ id: 96, name: '💯Premium Leather Belt', image: Belt3, price: 2000, category: 'belt' },
+{ id: 97, name: '💯Premium Leather Belt', image: Belt4, price: 2000, category: 'belt' },
+    { id: 98, name: '💯Premium Leather Belt', image: Belt5, price: 2000, category: 'belt' },
+    { id: 99, name: '💯Premium Leather Belt', image: Belt6, price: 2000, category: 'belt' },
+    { id: 100, name: '💯Stylish Brown Belt', image: Belt7, price: 2000, category: 'belt' },
+    { id: 101, name: '💯Elegant Black Belt', image: Belt8, price: 2000, category: 'belt' },
   ];
 
   // Categories for display
@@ -321,10 +360,9 @@ const Home = () => {
     setSelectedItem(null);
     setPaymentImmediate(false);
     
-    // Reset the size for the selected item when modal closes
-    if (selectedItem) {
-      setSelectedSizeForSuit(prev => ({ ...prev, [selectedItem.id]: undefined }));
-    }
+    // Clear the size selection when modal closes
+    setSelectedSizeForSuit({});
+    setLastSelectedItemId(null);
   };
 
   return (
@@ -398,12 +436,13 @@ const Home = () => {
                               key={size}
                               onClick={(e) => {
                                 e.preventDefault();
-                                setSelectedSizeForSuit((prev) => ({ ...prev, [item.id]: prev[item.id] === size ? undefined : size }));
-                                setSizeError(prev => ({ ...prev, [item.id]: false }));
+                                handleSizeSelection(item.id, size);
                               }}
-                              className={`px-3 py-1 rounded border text-sm ${
+                              className={`px-3 py-1 rounded border text-sm transition-all duration-300 ${
                                 selectedSizeForSuit[item.id] === size
-                                  ? 'bg-blue-600 text-white border-blue-600'
+                                  ? recentlySelectedSize[item.id]
+                                    ? 'bg-blue-600 text-white border-blue-600'
+                                    : 'bg-blue-100 text-blue-800 border-blue-300'
                                   : 'bg-white text-gray-600 border-gray-300'
                               }`}
                             >
@@ -412,23 +451,6 @@ const Home = () => {
                           ))}
                         </div>
                       </div>
-                      {/* Highlight container if error */}
-                      {sizeError[item.id] && (
-                        <style>
-                          {`
-                            /* Highlight effect when error */
-                            .size-error-highlight {
-                              border: 2px solid red !important;
-                              animation: pulse 1s infinite;
-                            }
-                            @keyframes pulse {
-                              0% { box-shadow: 0 0 5px red; }
-                              50% { box-shadow: 0 0 15px red; }
-                              100% { box-shadow: 0 0 5px red; }
-                            }
-                          `}
-                        </style>
-                      )}
                     </div>
                   )}
 
@@ -476,7 +498,7 @@ const Home = () => {
   );
 };
 
-// Payment Popup component
+// Payment Popup component (remains the same)
 const PaymentPopup = ({ item, selectedSize, onClose }) => {
   const [amount, setAmount] = useState('');
   const [paymentSuccess, setPaymentSuccess] = useState(false);

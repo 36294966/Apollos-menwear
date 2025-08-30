@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle, XCircle, ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Import jacket images
 import Leather1 from '../../Assets/Jackets/jacket1.jpg';
@@ -110,28 +111,32 @@ const LeatherJackets = () => {
 
   const leathers = [
     {
-      id: 1,
+      id: 90,
       name: 'Leather Jacket - Classic ⭐⭐⭐⭐⭐',
       image: Leather1,
       price: 'Ksh 3,500',
+      description: 'Premium quality classic leather jacket with a timeless design. Made from genuine leather for durability and style.'
     },
     {
-      id: 2,
+      id: 91,
       name: 'Leather Jacket - Premium ⭐⭐⭐⭐⭐',
       image: Leather2,
       price: 'Ksh 3,500',
+      description: 'High-end premium leather jacket with superior craftsmanship. Features a sleek design perfect for any occasion.'
     },
     {
-      id: 3,
+      id: 92,
       name: 'Leather Jacket - Modern Fit ⭐⭐⭐⭐⭐',
       image: Leather3,
       price: 'Ksh 3,500',
+      description: 'Contemporary modern fit leather jacket with a slim silhouette. Combines style and comfort for the fashion-forward individual.'
     },
     {
-      id: 4,
+      id: 93,
       name: 'Leather Jacket - Elegant Fit ⭐⭐⭐⭐⭐',
       image: Leather4,
       price: 'Ksh 3,500',
+      description: 'Elegant leather jacket with a sophisticated design. Perfect for those who appreciate refined style and quality materials.'
     },
   ];
 
@@ -175,16 +180,22 @@ const LeatherJackets = () => {
             key={leather.id}
             className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
           >
-            <div className="h-64 sm:h-80 w-full bg-gray-100 p-4 flex items-center justify-center">
-              <img
-                src={leather.image}
-                alt={leather.name}
-                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-              />
-            </div>
+            <Link to={`/product/${leather.id}`} className="block">
+              <div className="h-64 sm:h-80 w-full bg-gray-100 p-4 flex items-center justify-center">
+                <img
+                  src={leather.image}
+                  alt={leather.name}
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+              </div>
+            </Link>
             <div className="p-5 text-center space-y-4">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900">{leather.name}</h3>
+              <Link to={`/product/${leather.id}`}>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
+                  {leather.name}
+                </h3>
+              </Link>
               <p className="text-sm sm:text-lg font-bold text-blue-600">{leather.price}</p>
               <button
                 onClick={() => handlePurchase(leather)}

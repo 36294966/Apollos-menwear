@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, ChevronRight, ShoppingCart, XCircle } from 'lucide-react';
+import { CheckCircle, ChevronRight, ShoppingCart, XCircle, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Import all images as needed
@@ -105,15 +105,38 @@ const Home = () => {
   const [paymentImmediate, setPaymentImmediate] = useState(false);
   const [selectedSizeForSuit, setSelectedSizeForSuit] = useState({});
   const [hoveredItemId, setHoveredItemId] = useState(null);
+  const [sizeError, setSizeError] = useState({});
+  const [showSizeAlert, setShowSizeAlert] = useState(false);
 
   const Sizes = ['44', '46', '48', '50', '52', '54', '56', '58', '60'];
 
+  // Check if item requires size selection
+  const requiresSize = (item) => {
+    return item.category !== 'jeans' && item.category !== 'jacket' && item.category !== 'belt' && item.category !== 'shirt';
+  };
+
   // Handle adding to cart
-  const handleAddToCart = (item) => {
+  const handleAddToCart = (item, event) => {
+    if (event) event.preventDefault();
+    
+    // Check if size is required but not selected
+    if (requiresSize(item) && !selectedSizeForSuit[item.id]) {
+      setSizeError(prev => ({ ...prev, [item.id]: true }));
+      setShowSizeAlert(true);
+      setTimeout(() => setShowSizeAlert(false), 3000);
+      
+      // Highlight the size selection container
+      // Also, automatically reset the highlight after 3 seconds
+      setTimeout(() => {
+        setSizeError(prev => ({ ...prev, [item.id]: false }));
+      }, 3000);
+      return;
+    }
+    
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     const newItem = {
       ...item,
-      size: item.category !== 'jeans' && item.category !== 'jacket' && item.category !== 'belt' ? (selectedSizeForSuit[item.id] || 'Not Selected') : 'N/A',
+      size: requiresSize(item) ? (selectedSizeForSuit[item.id] || 'Not Selected') : 'N/A',
       addedAt: new Date().toISOString(),
     };
     localStorage.setItem('cart', JSON.stringify([...storedCart, newItem]));
@@ -122,23 +145,33 @@ const Home = () => {
     
     // Reset the size for this specific item
     setSelectedSizeForSuit(prev => ({ ...prev, [item.id]: undefined }));
+    setSizeError(prev => ({ ...prev, [item.id]: false }));
   };
-  
 
   // Handle purchase click
-  const handlePurchaseClick = (item) => {
+  const handlePurchaseClick = (item, event) => {
+    if (event) event.preventDefault();
+    
+    // Check if size is required but not selected
+    if (requiresSize(item) && !selectedSizeForSuit[item.id]) {
+      setSizeError(prev => ({ ...prev, [item.id]: true }));
+      setShowSizeAlert(true);
+      setTimeout(() => setShowSizeAlert(false), 3000);
+      
+      // Highlight the size selection container
+      setTimeout(() => {
+        setSizeError(prev => ({ ...prev, [item.id]: false }));
+      }, 3000);
+      return;
+    }
+    
     setSelectedItem(item);
     setPaymentImmediate(true);
     setShowModal(true);
     
-     handlePurchaseClick = (event, item) => {
-    event.preventDefault();  // Prevent page scroll
-    setSelectedItem(item);
-    setPaymentImmediate(true);
-    setShowModal(true);
+    // Reset the size error for this specific item
+    setSizeError(prev => ({ ...prev, [item.id]: false }));
   };
-  };
-  
 
   // Update cart count
   useEffect(() => {
@@ -151,8 +184,6 @@ const Home = () => {
     return () => window.removeEventListener('storage', updateCart);
   }, []);
   
-   
-
   // Data arrays for products
   const threePieceSuits = [
     { id: 1, name: 'Executive Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo1, price: 13000, category: 'three-piece' },
@@ -297,15 +328,23 @@ const Home = () => {
   };
 
   return (
-    <section className="p-6 sm:p-10 bg-gray-50 min-h-screen">
+    <section className="p-4 sm:p-6 md:p-8 bg-gray-50 min-h-screen overflow-x-hidden">
+      {/* Size Alert */}
+      {showSizeAlert && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg flex items-center z-50 shadow-lg">
+          <AlertCircle className="w-5 h-5 mr-2" />
+          <span>Please select a size before proceeding!</span>
+        </div>
+      )}
+
       {/* Categories */}
       {categories.map((category) => (
-        <div key={category.title}>
-          <div className="bg-gradient-to-r from-green-400 to-blue-500 text-white text-xl p-6 text-center font-bold rounded-xl mb-8 animate-blink mt-16 mx-4">
-            <p>{category.title} – 🔥 Hurry Up!! 🚀 Limited Time Offer!</p>
+        <div key={category.title} className="mb-12">
+          <div className="bg-gradient-to-r from-green-400 to-blue-500 text-white text-lg sm:text-xl p-4 sm:p-6 text-center font-bold rounded-xl mb-6 mt-16 mx-2 sm:mx-4 animate-pulse">
+            <p>{category.title} – 🔥 Hurry Up!! 🚀 Limited Time Offers! 💯 Wool Fading Free </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 px-2 sm:px-0">
             {category.items.map((item) => (
               <div
                 key={item.id}
@@ -313,12 +352,12 @@ const Home = () => {
                 onMouseEnter={() => handleMouseEnter(item.id)}
                 onMouseLeave={handleMouseLeave}
               >
-                <div className={`w-full bg-gray-100 p-4 flex items-center justify-center transition-all duration-300 ${hoveredItemId === item.id ? 'transform scale-110' : ''}`}>
+                <div className={`w-full bg-gray-100 p-4 flex items-center justify-center transition-all duration-300 ${hoveredItemId === item.id ? 'transform scale-105' : ''}`}>
                   <Link to={`/product/${item.id}`}>
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-full sm:w-3/4 md:w-3/4 lg:w-full h-52 object-contain rounded-lg transition-all duration-300"
+                      className="w-full h-48 sm:h-52 object-contain rounded-lg transition-all duration-300"
                       loading="lazy"
                     />
                   </Link>
@@ -326,53 +365,86 @@ const Home = () => {
 
                 {/* View More Button (visible on hover) */}
                 {hoveredItemId === item.id && (
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-3 right-3">
                     <Link
                       to={category.link}
-                      className="bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-all"
+                      className="bg-blue-600 text-white py-1 px-3 text-xs sm:text-sm rounded-lg font-semibold hover:bg-blue-700 transition-all"
                     >
                       View More
                     </Link>
                   </div>
                 )}
 
-                <div className="p-5 text-center space-y-4">
-                  <h3 className="text-lg sm:text-base font-bold">{item.name}</h3>
-                  <div className="flex justify-center mb-2">
-                    <span className="text-blue-600 font-bold text-xl sm:text-lg">Ksh {item.price}</span>
+                <div className="p-4 text-center space-y-3">
+                  <h3 className="text-base sm:text-lg font-bold line-clamp-2">{item.name}</h3>
+                  <div className="flex justify-center">
+                    <span className="text-blue-600 font-bold text-lg sm:text-xl">Ksh {item.price.toLocaleString()}</span>
                   </div>
 
-                  {/* Sizes */}
-                  {category.title !== 'Jeans' && category.title !== 'Official Shirts' && category.title !== 'Leather Jackets' && category.title !== 'Belts' && (
+                  {/* Sizes - Scrollable container */}
+                  {requiresSize(item) && (
                     <div className="flex flex-col items-start space-y-2">
-                      <span className="text-sm sm:text-base md:text-lg font-medium">Select Sizes</span>
-                      <div className="flex space-x-2 overflow-x-auto pb-2 w-full">
-                        {Sizes.map((size) => (
-                          <button
-                            key={size}
-                            onClick={() => setSelectedSizeForSuit((prev) => ({ ...prev, [item.id]: prev[item.id] === size ? undefined : size }))}
-                            className={`px-3 sm:px-4 md:px-5 py-1 sm:py-2 rounded-lg border-2 text-xs sm:text-sm md:text-base ${selectedSizeForSuit[item.id] === size ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300'}`}
-                          >
-                            {size}
-                          </button>
-                        ))}
+                      <span className={`text-sm font-medium ${sizeError[item.id] ? 'text-red-600' : 'text-gray-700'}`}>
+                        {sizeError[item.id] ? 'Select Size (Required)' : 'Select Size'}
+                      </span>
+                      <div
+                        className={`w-full overflow-x-auto pb-2 ${
+                          sizeError[item.id] ? 'border border-red-500 rounded-lg p-1' : ''
+                        }`}
+                      >
+                        <div className="flex space-x-2 min-w-max">
+                          {Sizes.map((size) => (
+                            <button
+                              key={size}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setSelectedSizeForSuit((prev) => ({ ...prev, [item.id]: prev[item.id] === size ? undefined : size }));
+                                setSizeError(prev => ({ ...prev, [item.id]: false }));
+                              }}
+                              className={`px-3 py-1 rounded border text-sm ${
+                                selectedSizeForSuit[item.id] === size
+                                  ? 'bg-blue-600 text-white border-blue-600'
+                                  : 'bg-white text-gray-600 border-gray-300'
+                              }`}
+                            >
+                              {size}
+                            </button>
+                          ))}
+                        </div>
                       </div>
+                      {/* Highlight container if error */}
+                      {sizeError[item.id] && (
+                        <style>
+                          {`
+                            /* Highlight effect when error */
+                            .size-error-highlight {
+                              border: 2px solid red !important;
+                              animation: pulse 1s infinite;
+                            }
+                            @keyframes pulse {
+                              0% { box-shadow: 0 0 5px red; }
+                              50% { box-shadow: 0 0 15px red; }
+                              100% { box-shadow: 0 0 5px red; }
+                            }
+                          `}
+                        </style>
+                      )}
                     </div>
                   )}
 
                   {/* Buttons */}
-                  <div className="space-y-2 mt-4">
+                  <div className="space-y-2 mt-3">
                     <button
-                      onClick={() => handlePurchaseClick(item)}
-                      className="w-full bg-green-800 hover:bg-green-800 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition"
+                      onClick={(e) => handlePurchaseClick(item, e)}
+                      className="w-full bg-green-700 hover:bg-green-800 text-white py-2 sm:py-3 rounded-lg font-semibold flex items-center justify-center gap-1 sm:gap-2 transition text-sm sm:text-base"
                     >
-                      <CheckCircle className="w-5 h-5" /> Purchase
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Purchase
                     </button>
                     <button
-                      onClick={() => handleAddToCart(item)}
-                      className="w-full bg-blue-600 hover:bg-gray-800 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition"
+                      onClick={(e) => handleAddToCart(item, e)}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 sm:py-3 rounded-lg font-semibold flex items-center justify-center gap-1 sm:gap-2 transition text-sm sm:text-base"
                     >
-                      <ShoppingCart className="w-5 h-5" /> Add to Cart
+                      <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" /> Add to Cart
                     </button>
                   </div>
                 </div>
@@ -381,12 +453,12 @@ const Home = () => {
           </div>
           
 
-          <div className="flex justify-end mt-6 mb-8">
+          <div className="flex justify-end mt-6 mb-8 px-2 sm:px-0">
             <Link
               to={category.link}
-              className="text-xl font-bold text-blue-600 hover:text-blue-800 flex items-center space-x-2"
+              className="text-lg sm:text-xl font-bold text-blue-600 hover:text-blue-800 flex items-center space-x-2"
             >
-              <span>View More</span> <ChevronRight className="w-6 h-6" />
+              <span>View More</span> <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </Link>
           </div>
         </div>
@@ -431,12 +503,12 @@ const PaymentPopup = ({ item, selectedSize, onClose }) => {
     
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div className="bg-white p-8 rounded-2xl w-[95%] max-w-md space-y-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm p-4">
+      <div className="bg-white p-6 rounded-2xl w-full max-w-md space-y-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
           {paymentSuccess ? (
             <>
-              <CheckCircle className="w-8 h-8 text-green-500" />
+              <CheckCircle className="w-6 h-6 text-green-500" />
               Payment Confirmed!
             </>
           ) : (
@@ -477,14 +549,14 @@ const PaymentPopup = ({ item, selectedSize, onClose }) => {
             <div className="flex gap-4">
               <button
                 onClick={handlePaymentConfirmation}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold transition-all flex items-center justify-center gap-2"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 <CheckCircle className="w-5 h-5" />
                 Confirm Payment
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 rounded-lg font-bold transition-all flex items-center justify-center gap-2"
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 <XCircle className="w-5 h-5" />
                 Cancel
@@ -497,8 +569,6 @@ const PaymentPopup = ({ item, selectedSize, onClose }) => {
             <p className="text-sm text-gray-500 mt-2">Closing automatically...</p>
           </div>
         )}
-    
-
       </div>
     </div>
   );

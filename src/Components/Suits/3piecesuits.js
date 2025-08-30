@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CheckCircle, XCircle, ShoppingCart, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 
-// Import suit images
+// Import your images (ensure these paths are correct)
 import Photo1 from '../../Assets/Appolo/photo1.jpeg';
 import Photo2 from '../../Assets/Appolo/photo2.jpeg';
 import Photo3 from '../../Assets/Appolo/photo3.jpeg';
@@ -38,6 +38,8 @@ import ThreePiece29 from '../../Assets/Suits/threepiece29.jpg';
 import ThreePiece30 from '../../Assets/Suits/threepiece30.jpg';
 import ThreePiece31 from '../../Assets/Suits/threepiece31.jpg';
 import ThreePiece32 from '../../Assets/Suits/threepiece32.jpg';
+import DoubleBreast1 from '../../Assets/Suits/doubleBreast1.jpg';
+import DoubleBreast2 from '../../Assets/Suits/doubleBreast2.jpg';
 
 const PaymentPopup = ({ onClose, item, selectedSize }) => {
   const [amount, setAmount] = useState('');
@@ -101,7 +103,7 @@ const PaymentPopup = ({ onClose, item, selectedSize }) => {
                 className="w-full p-2 sm:p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-transparent text-xs sm:text-sm"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value.replace(/\D/g, ''))}
-                min="13000"
+                min={paymentDetails.standardPrice}
               />
             </div>
 
@@ -142,8 +144,9 @@ const ThreePieceSuits = () => {
   const [showSizeError, setShowSizeError] = useState(false);
   const [errorSuitId, setErrorSuitId] = useState(null);
   const [checkedItem, setCheckedItem] = useState(null);
+  const [sizeHighlight, setSizeHighlight] = useState(false); // Added for highlight effect
   const timeoutRef = useRef(null);
-  
+
   const sizes = ['44', '46', '48', '50', '52', '54', '56', '58', '60'];
 
   useEffect(() => {
@@ -151,21 +154,15 @@ const ThreePieceSuits = () => {
       const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
       setCartCount(storedCart.length);
     };
-    
     updateCart();
     window.addEventListener('storage', updateCart);
     return () => window.removeEventListener('storage', updateCart);
   }, []);
 
-  // Effect to automatically uncheck after 5 seconds of inactivity
+  // Auto uncheck size after 5 seconds inactivity
   useEffect(() => {
-    if (checkedItem) {
-      // Clear any existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      
-      // Set new timeout to uncheck after 5 seconds
+    if (checkedItem !== null) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         setCheckedItem(null);
         setSelectedSizeForSuit(prev => {
@@ -173,57 +170,55 @@ const ThreePieceSuits = () => {
           delete newState[checkedItem];
           return newState;
         });
+        setSizeHighlight(false); // Reset highlight on uncheck
       }, 5000);
     }
-
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [checkedItem]);
 
-  const threePieceSuits = [
-    { id: 1, name: 'Executive Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo1, price: 13000 },
-    { id: 2, name: 'Classic fading free Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo2, price: 13000 },
-    { id: 3, name: 'Premium Linen Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo3, price: 13000 },
-    { id: 4, name: 'Classic Pinstripe Ensemble ⭐⭐⭐⭐⭐', image: Photo4, price: 13000 },
-    { id: 5, name: 'Modern-Fit Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece1, price: 13000 },
-    { id: 6, name: 'Royal Navy Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece2, price: 13000 },
-    { id: 7, name: 'Designer Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece3, price: 13000 },
-    { id: 8, name: 'Bespoke Three-piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece4, price: 13000 },
-    { id: 9, name: 'Executive Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece5, price: 13000 },
-    { id: 10, name: 'Luxurious Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece6, price: 13000 },
-    { id: 11, name: 'Prestige Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece7, price: 13000 },
-    { id: 12, name: 'Elite Evening Three-piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece8, price: 13000 },
-    { id: 13, name: 'Glamorous Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece9, price: 13000 },
-    { id: 14, name: 'Sleek Business Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece10, price: 13000 },
-    { id: 15, name: 'super wool fading Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece11, price: 13000 },
-    { id: 16, name: ' Fashion Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece12, price: 13000 },
-    { id: 17, name: 'Opulence Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece14, price: 13000 },
-    { id: 18, name: 'Sophistication Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece15, price: 13000 },
-    { id: 19, name: 'Couture ClassicsThree-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece16, price: 13000 },
-    { id: 20, name: 'Dignity Collection Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece17, price: 13000 },
-    { id: 21, name: 'Vanguard Elite Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece18, price: 13000 },
-    { id: 22, name: 'Summit Suits Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece19, price: 13000 },
-    { id: 23, name: 'Executive Edge Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece20, price: 13000 },
-    { id: 24, name: 'Eminence Collection Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece21, price: 13000 },
-    { id: 25, name: 'Refined Royalty Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece22, price: 13000 },
-    { id: 26, name: 'Pinnacle Series Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece23, price: 13000 },
-    { id: 27, name: 'Urban Aristocrat Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece24, price: 13000 },
-    { id: 28, name: 'Noble AttireThree-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece25, price: 13000 },
-    { id: 29, name: 'Legacy Luxe Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece26, price: 13000 },
-    { id: 30, name: 'Signature Sovereign Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece27, price: 13000 },
-    { id: 31, name: 'Majesty Mode Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece28, price: 13000 },
-    { id: 32, name: 'Imperial Attire Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece29, price: 13000 },
-    { id: 33, name: 'Monarch Line Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece30, price: 13000 },
-    { id: 34, name: 'Crown & Confidence Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece31, price: 13000 },
-    { id: 35, name: 'Virtue Vogue Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece32, price: 13000 },
-    { id: 36, name: 'Fashion Three-Piece Suit ⭐⭐⭐⭐⭐', image: ThreePiece13, price: 13000 },
-  ];
+  const suits = [
+    { id: 1, name: 'Executive Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo1, price: 13000, category: 'three-piece' },
+        { id: 2, name: 'Elegance Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo2, price: 13000, category: 'three-piece' },
+        { id: 3, name: 'Premium Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo3, price: 13000, category: 'three-piece' },
+        { id: 4, name: 'Classic Pinstripe Ensemble ⭐⭐⭐⭐⭐', image: Photo4, price: 13000, category: 'three-piece' },
+        { id: 5, name: 'Modern-Fit Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece1, price: 13000, category: 'three-piece' },
+        { id: 6, name: 'Royal Navy Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece2, price: 13000, category: 'three-piece' },
+        { id: 7, name: 'Luxury Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece3, price: 13000, category: 'three-piece' },
+        { id: 8, name: 'Modern Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece4, price: 13000, category: 'three-piece' },
+        { id: 9, name: 'Elite Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece5, price: 13000, category: 'three-piece' },
+        { id: 10, name: 'Prestige Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece6, price: 13000, category: 'three-piece' },
+        { id: 11, name: 'Imperial Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece7, price: 13000, category: 'three-piece' },
+        { id: 12, name: 'LuxeLine Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece9, price: 13000, category: 'three-piece' },
+        { id: 13, name: 'Sovereign Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece10, price: 13000, category: 'three-piece' },
+        { id: 14, name: 'Heritage Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece11, price: 13000, category: 'three-piece' },
+        { id: 15, name: 'Legacy Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece12, price: 13000, category: 'three-piece' },
+        { id: 16, name: 'Opulence Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece14, price: 13000, category: 'three-piece' },
+        { id: 17, name: 'Sophistication Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece15, price: 13000, category: 'three-piece' },
+        { id: 18, name: 'Couture ClassicsThree-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece16, price: 13000, category: 'three-piece' },
+        { id: 20, name: 'Dignity Collection Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece17, price: 13000, category: 'three-piece' },
+        { id: 21, name: 'Vanguard Elite Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece18, price: 13000, category: 'three-piece' },
+        { id: 22, name: 'Summit Suits Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece19, price: 13000, category: 'three-piece' },
+        { id: 23, name: 'Executive Edge Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece20, price: 13000, category: 'three-piece' },
+        { id: 24, name: 'Eminence Collection Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece21, price: 13000, category: 'three-piece' },
+        { id: 25, name: 'Refined Royalty Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece22, price: 13000, category: 'three-piece' },
+        { id: 26, name: 'Pinnacle Series Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece23, price: 13000, category: 'three-piece' },
+        { id: 27, name: 'Urban Aristocrat Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece24, price: 13000, category: 'three-piece' },
+        { id: 28, name: 'Noble AttireThree-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece25, price: 13000, category: 'three-piece' },
+        { id: 29, name: 'Legacy Luxe Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece26, price: 13000, category: 'three-piece' },
+        { id: 30, name: 'Signature Sovereign Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece27, price: 13000, category: 'three-piece' },
+        { id: 31, name: 'Majesty Mode Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece28, price: 13000, category: 'three-piece' },
+        { id: 32, name: 'Imperial Attire Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece29, price: 13000, category: 'three-piece' },
+        { id: 33, name: 'Monarch Line Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece30, price: 13000, category: 'three-piece' },
+        { id: 34, name: 'Crown & Confidence Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece31, price: 13000, category: 'three-piece' },
+        { id: 35, name: 'Virtue Vogue Three-Piece Suit⭐⭐⭐⭐⭐', image: ThreePiece32, price: 13000, category: 'three-piece' },
+  { id: 36, name: 'Premium Double Breast Suit⭐⭐⭐⭐⭐', image: DoubleBreast1, price: 13500, category: 'double-breast' },
+    { id: 37, name: 'Elegant Double Breast Suit⭐⭐⭐⭐⭐', image: DoubleBreast2, price: 13500, category: 'double-breast' },
+      ];
 
   const handleSizeSelect = (itemId, size) => {
-    // If a different item was previously checked, uncheck it
+    // Uncheck previous if different item
     if (checkedItem && checkedItem !== itemId) {
       setSelectedSizeForSuit(prev => {
         const newState = {...prev};
@@ -231,15 +226,9 @@ const ThreePieceSuits = () => {
         return newState;
       });
     }
-    
-    // Set the new checked item
     setCheckedItem(itemId);
     setSelectedSizeForSuit(prev => ({ ...prev, [itemId]: size }));
-    
-    // Reset the timeout for auto-uncheck
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       setCheckedItem(null);
       setSelectedSizeForSuit(prev => {
@@ -247,6 +236,7 @@ const ThreePieceSuits = () => {
         delete newState[itemId];
         return newState;
       });
+      setSizeHighlight(false); // Reset highlight on uncheck
     }, 5000);
   };
 
@@ -254,63 +244,59 @@ const ThreePieceSuits = () => {
     if (!selectedSizeForSuit[item.id]) {
       setErrorSuitId(item.id);
       setShowSizeError(true);
+      setSizeHighlight(true); // Trigger pulse
       setTimeout(() => {
         setShowSizeError(false);
         setErrorSuitId(null);
+        setSizeHighlight(false); // Reset after timeout
       }, 3000);
       return;
     }
-    
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     const newItem = {
       ...item,
       size: selectedSizeForSuit[item.id],
-      addedAt: new Date().toISOString()
     };
-    const updatedCart = [...storedCart, newItem];
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    localStorage.setItem('cart', JSON.stringify([...storedCart, newItem]));
     window.dispatchEvent(new Event('storage'));
-    
-    // Reset size selection for this suit
-    setSelectedSizeForSuit(prev => ({...prev, [item.id]: null}));
-    
-    // Clear the checked item after adding to cart
-    setCheckedItem(null);
-    
     alert(`${item.name} (Size: ${selectedSizeForSuit[item.id]}) added to cart`);
+    // Reset size selection after action
+    setSelectedSizeForSuit(prev => ({ ...prev, [item.id]: null }));
+    setCheckedItem(null);
   };
 
   const handlePurchase = (item) => {
     if (!selectedSizeForSuit[item.id]) {
       setErrorSuitId(item.id);
       setShowSizeError(true);
+      setSizeHighlight(true); // Trigger pulse
       setTimeout(() => {
         setShowSizeError(false);
         setErrorSuitId(null);
+        setSizeHighlight(false); // Reset after timeout
       }, 3000);
       return;
     }
-    
     setSelectedSuit(item);
     setShowPayment(true);
-    
-    // Clear the checked item after proceeding to purchase
+    // Reset size selection after purchase
+    setSelectedSizeForSuit(prev => ({ ...prev, [item.id]: null }));
     setCheckedItem(null);
   };
 
   const handlePrevClick = (id) => {
     const sizeSelector = document.getElementById(`size-selector-${id}`);
-    sizeSelector.scrollBy({ left: -100, behavior: 'smooth' });
+    if (sizeSelector) sizeSelector.scrollBy({ left: -100, behavior: 'smooth' });
   };
 
   const handleNextClick = (id) => {
     const sizeSelector = document.getElementById(`size-selector-${id}`);
-    sizeSelector.scrollBy({ left: 100, behavior: 'smooth' });
+    if (sizeSelector) sizeSelector.scrollBy({ left: 100, behavior: 'smooth' });
   };
 
   return (
     <section className="p-6 sm:p-10 bg-gray-50 min-h-screen">
-      {/* Size Error Popup */}
+      {/* -------------------- Size Error Popup -------------------- */}
       {showSizeError && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2">
           <AlertCircle className="w-5 h-5" />
@@ -318,12 +304,14 @@ const ThreePieceSuits = () => {
         </div>
       )}
 
+      {/* Banner */}
       <div className="bg-gradient-to-r from-green-400 to-blue-500 text-white text-center text-sm sm:text-lg font-semibold p-4 rounded-xl mb-8 animate-pulse mt-24 mx-4">
         <p>Hurry up! Limited time offer! Get your premium three-piece suits today! 💯 super wool fading free</p>
       </div>
 
+      {/* Cart Button */}
       <div className="fixed top-16 right-4 z-40">
-        <button 
+        <button
           onClick={() => setIsCartOpen(true)}
           className="relative bg-white p-3 rounded-full shadow-lg hover:shadow-xl transition"
         >
@@ -354,15 +342,11 @@ const ThreePieceSuits = () => {
               <p className="text-gray-600">Your cart is empty</p>
             ) : (
               <div className="space-y-4">
-                {JSON.parse(localStorage.getItem('cart') || '[]').map((item, index) => (
+                {JSON.parse(localStorage.getItem('cart'))?.map((item, index) => (
                   <div key={index} className="pb-2 border-b flex justify-between items-center">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
+                        <img src={item.image} alt={item.name} className="w-full h-full object-contain rounded-lg" />
                       </div>
                       <div>
                         <p className="font-semibold text-sm">{item.name}</p>
@@ -379,30 +363,28 @@ const ThreePieceSuits = () => {
       )}
 
       {/* Suit Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-4 gap-6">
-        {threePieceSuits.map((suit) => (
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+        {suits.map((suit) => (
           <div
             key={suit.id}
-            className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+            className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative cursor-pointer"
+            onClick={() => window.location.href = `/product/${suit.id}`}
           >
-            <div className="h-80 sm:h-96 p-2 sm:p-4 flex items-center justify-center bg-gray-50">
-              <img
-                src={suit.image}
-                alt={suit.name}
-                className="w-full h-full object-contain rounded-lg transform group-hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-              />
+            {/* Image container */}
+            <div className="aspect-square bg-gray-100 p-5 flex items-center justify-center">
+              <img src={suit.image} alt={suit.name} className="w-full h-full object-contain" />
             </div>
-            <div className="p-4 sm:p-6 text-center space-y-4">
-              <h3 className="text-lg sm:text-xl font-bold">{suit.name}</h3>
-              <p className="text-md sm:text-lg font-bold text-blue-600">Ksh {suit.price}</p>
+            {/* Content */}
+            <div className="p-5 text-center space-y-4" onClick={(e) => e.stopPropagation()}>
+              <h3 className="text-base sm:text-lg md:text-xl lg:text-xl font-bold text-gray-900">{suit.name}</h3>
+              <p className="text-base sm:text-lg md:text-xl lg:text-xl text-blue-600 font-bold">Ksh {suit.price}</p>
               
-              {/* Size Selection */}
-              <div className="text-xs sm:text-sm font-semibold mb-2">Select Size:</div>
+              {/* Size Selector */}
+              <div className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold mb-2">Select Size:</div>
               <div className="flex justify-center items-center mb-2">
                 <button
-                  onClick={() => handlePrevClick(suit.id)}
-                  className="text-lg sm:text-xl text-gray-600 hover:text-gray-800"
+                  onClick={(e) => { e.stopPropagation(); handlePrevClick(suit.id); }}
+                  className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 hover:text-gray-800"
                 >
                   <ChevronLeft />
                 </button>
@@ -413,12 +395,12 @@ const ThreePieceSuits = () => {
                   {sizes.map((size) => (
                     <button
                       key={size}
-                      onClick={() => handleSizeSelect(suit.id, size)}
-                      className={`px-4 py-2 rounded-lg border-2 min-w-[44px] transition-all ${
-                        selectedSizeForSuit[suit.id] === size 
-                          ? 'bg-blue-600 text-white border-blue-600' 
-                          : errorSuitId === suit.id 
-                            ? 'border-red-500 bg-red-50 animate-pulse' 
+                      onClick={(e) => { e.stopPropagation(); handleSizeSelect(suit.id, size); }}
+                      className={`px-4 py-2 rounded-lg border font-semibold transition ${
+                        (checkedItem === suit.id && selectedSizeForSuit[suit.id] === size)
+                          ? 'bg-blue-600 text-white border-blue-600'
+                          : (errorSuitId === suit.id && sizeHighlight)
+                            ? 'border-red-500 bg-red-50 animate-pulse'
                             : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
                       }`}
                     >
@@ -427,24 +409,25 @@ const ThreePieceSuits = () => {
                   ))}
                 </div>
                 <button
-                  onClick={() => handleNextClick(suit.id)}
-                  className="text-lg sm:text-xl text-gray-600 hover:text-gray-800"
+                  onClick={(e) => { e.stopPropagation(); handleNextClick(suit.id); }}
+                  className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 hover:text-gray-800"
                 >
                   <ChevronRight />
                 </button>
               </div>
               
+              {/* Buttons */}
               <div className="space-y-2">
                 <button
-                  onClick={() => handlePurchase(suit)}
-                  className="w-full bg-blue-600 hover:bg-blue-800 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  onClick={(e) => { e.stopPropagation(); handlePurchase(suit); }}
+                  className="w-full bg-gray-800 hover:bg-gray-900 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-5 h-5" />
                   Purchase Now
                 </button>
                 <button
-                  onClick={() => handleAddToCart(suit)}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  onClick={(e) => { e.stopPropagation(); handleAddToCart(suit); }}
+                  className="w-full bg-green-600 hover:bg-green-800 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   Add to Cart
@@ -455,15 +438,16 @@ const ThreePieceSuits = () => {
         ))}
       </div>
 
+      {/* Payment Popup */}
       {showPayment && (
-        <PaymentPopup 
+        <PaymentPopup
           item={selectedSuit}
           selectedSize={selectedSizeForSuit[selectedSuit.id]}
           onClose={() => {
             setShowPayment(false);
             setSelectedSuit(null);
-            // Reset size selection after purchase
-            setSelectedSizeForSuit(prev => ({...prev, [selectedSuit.id]: null}));
+            // Reset size selection after payment
+            setSelectedSizeForSuit(prev => ({ ...prev, [selectedSuit.id]: null }));
           }}
         />
       )}

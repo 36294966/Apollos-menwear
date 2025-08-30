@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingCart, ChevronLeft, ChevronRight, CheckCircle, XCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 // Import Kaunda suits images
 import Kaunda1 from '../../Assets/Suits/Kaunda1.jpg';
@@ -132,11 +132,12 @@ const KaundaSuits = () => {
   const [checkedItem, setCheckedItem] = useState(null);
   const timeoutRef = useRef(null);
 
+  // Kaunda suits data from productDetails
   const kaundaSuits = [
-    { id: 1, name: 'Classic Kaunda Suit ⭐⭐⭐⭐⭐', image: Kaunda1, price: 14000 },
-    { id: 2, name: 'Royal Kaunda Suit ⭐⭐⭐⭐⭐', image: Kaunda2, price: 14000 },
-    { id: 3, name: 'Modern Kaunda Suit ⭐⭐⭐⭐⭐', image: Kaunda3, price: 14000 },
-    { id: 4, name: 'Elegant Kaunda Suit ⭐⭐⭐⭐⭐', image: Kaunda4, price: 14000 },
+    { id: 54, name: 'Classic Kaunda Suit ⭐⭐⭐⭐⭐', price: 14000, description: 'A stylish Kaunda suit perfect for formal African occasions.', category: 'Kaunda Suits', image: Kaunda1 },
+    { id: 55, name: 'Royal Kaunda Suit ⭐⭐⭐⭐⭐', price: 14000, description: 'A stylish Kaunda suit perfect for formal African occasions.', category: 'Kaunda Suits', image: Kaunda2 },
+    { id: 56, name: 'Modern Kaunda Suit ⭐⭐⭐⭐⭐', price: 14000, description: 'A stylish Kaunda suit perfect for formal African occasions.', category: 'Kaunda Suits', image: Kaunda3 },
+    { id: 57, name: 'Elegant Kaunda Suit ⭐⭐⭐⭐⭐', price: 14000, description: 'A stylish Kaunda suit perfect for formal African occasions.', category: 'Kaunda Suits', image: Kaunda4 },
   ];
 
   const sizes = ['44', '46', '48', '50', '52', '54', '56'];
@@ -271,6 +272,10 @@ const KaundaSuits = () => {
     }
   };
 
+  const navigateToProduct = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   return (
     <section className="p-4 sm:p-6 bg-gray-50 min-h-screen">
       {/* Cart Button */}
@@ -365,7 +370,10 @@ const KaundaSuits = () => {
             key={suit.id}
             className={`bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden ${index < 2 ? 'blink-card' : ''}`}
           >
-            <div className="h-64 w-full bg-gray-100 p-4 flex items-center justify-center">
+            <div 
+              className="h-64 w-full bg-gray-100 p-4 flex items-center justify-center cursor-pointer"
+              onClick={() => navigateToProduct(suit.id)}
+            >
               <img
                 src={suit.image}
                 alt={suit.name}
@@ -374,7 +382,12 @@ const KaundaSuits = () => {
               />
             </div>
             <div className="p-4 sm:p-5 text-center space-y-3">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900">{suit.name}</h3>
+              <h3 
+                className="text-lg sm:text-xl font-bold text-gray-900 cursor-pointer hover:text-blue-600"
+                onClick={() => navigateToProduct(suit.id)}
+              >
+                {suit.name}
+              </h3>
               <p className="text-md sm:text-lg font-semibold text-blue-600">Ksh {suit.price.toLocaleString()}</p>
               {/* Size Selection */}
               <div className="text-sm sm:text-md font-semibold mb-2">Select Size:</div>
@@ -427,6 +440,7 @@ const KaundaSuits = () => {
                   <ShoppingCart className="w-5 h-5" />
                   Add to Cart
                 </button>
+                
               </div>
             </div>
           </div>

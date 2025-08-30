@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { CheckCircle, XCircle, ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Import belt images
 import Belt1 from '../../Assets/Accessories/belt1.jpg';
@@ -113,14 +114,70 @@ const Belt = () => {
   const [selectedItem, setSelectedItem] = useState(null);
 
   const belts = [
-    { id: 1, image: Belt1, name: 'Premium Leather Belt ⭐⭐⭐⭐⭐', price: 'Ksh 2,000' },
-    { id: 2, image: Belt2, name: 'Premium Black Belt ⭐⭐⭐⭐⭐', price: 'Ksh 2,000' },
-    { id: 3, image: Belt3, name: 'Premium Leather Belt ⭐⭐⭐⭐⭐', price: 'Ksh 2,000' },
-    { id: 4, image: Belt4, name: 'Premium Leather Belt ⭐⭐⭐⭐⭐', price: 'Ksh 2,000' },
-    { id: 5, image: Belt5, name: 'Premium Leather Belt ⭐⭐⭐⭐⭐', price: 'Ksh 2,000' },
-    { id: 6, image: Belt6, name: 'Premium Leather Belt ⭐⭐⭐⭐⭐', price: 'Ksh 2,000' },
-    { id: 7, image: Belt7, name: 'Stylish Brown Belt ⭐⭐⭐⭐⭐', price: 'Ksh 2,000' },
-    { id: 8, image: Belt8, name: 'Elegant Black Belt ⭐⭐⭐⭐⭐', price: 'Ksh 2,000' },
+    { 
+      id: 94, 
+      image: Belt1, 
+      name: 'Premium Leather Belt ⭐⭐⭐⭐⭐', 
+      price: 'Ksh 2,000',
+      description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.',
+      category: 'Belt'
+    },
+    { 
+      id: 95, 
+      image: Belt2, 
+      name: 'Premium Black Belt ⭐⭐⭐⭐⭐', 
+      price: 'Ksh 2,000',
+      description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.',
+      category: 'Belt'
+    },
+    { 
+      id: 96, 
+      image: Belt3, 
+      name: 'Premium Leather Belt ⭐⭐⭐⭐⭐', 
+      price: 'Ksh 2,000',
+      description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.',
+      category: 'Belt'
+    },
+    { 
+      id: 97, 
+      image: Belt4, 
+      name: 'Premium Leather Belt ⭐⭐⭐⭐⭐', 
+      price: 'Ksh 2,000',
+      description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.',
+      category: 'Belt'
+    },
+    { 
+      id: 98, 
+      image: Belt5, 
+      name: 'Premium Leather Belt ⭐⭐⭐⭐⭐', 
+      price: 'Ksh 2,000',
+      description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.',
+      category: 'Belt'
+    },
+    { 
+      id: 99, 
+      image: Belt6, 
+      name: 'Premium Leather Belt ⭐⭐⭐⭐⭐', 
+      price: 'Ksh 2,000',
+      description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.',
+      category: 'Belt'
+    },
+    { 
+      id: 100, 
+      image: Belt7, 
+      name: 'Stylish Brown Belt ⭐⭐⭐⭐⭐', 
+      price: 'Ksh 2,000',
+      description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.',
+      category: 'Belt'
+    },
+    { 
+      id: 101, 
+      image: Belt8, 
+      name: 'Elegant Black Belt ⭐⭐⭐⭐⭐', 
+      price: 'Ksh 2,000',
+      description: '🌟 Adjustable Fit: Perfect for all waist sizes with a reliable, sturdy buckle that ensures comfort and security.',
+      category: 'Belt'
+    },
   ];
 
   const handlePurchase = (item) => {
@@ -163,16 +220,22 @@ const Belt = () => {
             key={belt.id}
             className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
           >
-            <div className="h-48 sm:h-60 bg-gray-100 p-4 flex items-center justify-center">
-              <img
-                src={belt.image}
-                alt={belt.name}
-                className="w-full h-full object-contain rounded-t-lg hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-              />
-            </div>
+            <Link to={`/product/${belt.id}`}>
+              <div className="h-48 sm:h-60 bg-gray-100 p-4 flex items-center justify-center">
+                <img
+                  src={belt.image}
+                  alt={belt.name}
+                  className="w-full h-full object-contain rounded-t-lg hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+              </div>
+            </Link>
             <div className="p-5 text-center space-y-4">
-              <h3 className="text-xl sm:text-lg font-bold text-gray-900">{belt.name}</h3>
+              <Link to={`/product/${belt.id}`}>
+                <h3 className="text-xl sm:text-lg font-bold text-gray-900 hover:text-blue-600 transition-colors">
+                  {belt.name}
+                </h3>
+              </Link>
               <p className="text-blue-600 font-bold text-xl">{belt.price}</p>
               <button
                 onClick={() => handlePurchase(belt)}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // Import tuxedo images
 import Tuxedo1 from '../../Assets/Suits/tuxedo1.jpg';
@@ -9,7 +10,7 @@ import Tuxedo5 from '../../Assets/Suits/tuxedo5.jpg';
 import Tuxedo6 from '../../Assets/Suits/tuxedo6.jpg';
 import Tuxedo7 from '../../Assets/Suits/tuxedo7.jpg';
 import Tuxedo8 from '../../Assets/Suits/tuxedo8.jpg';
-import Tuxedo9 from '../../Assets/Suits/tuxedo9.jpg'; // New tuxedo added
+import Tuxedo9 from '../../Assets/Suits/tuxedo9.jpg';
 
 const PaymentPopup = ({ item, selectedSize, onClose }) => {
   const [amount, setAmount] = useState('');
@@ -123,6 +124,7 @@ const SizeValidationPopup = ({ onClose }) => {
 };
 
 const Tuxedo = () => {
+  const navigate = useNavigate();
   const [showPayment, setShowPayment] = useState(false);
   const [selectedTuxedo, setSelectedTuxedo] = useState(null);
   const [cartCount, setCartCount] = useState(0);
@@ -134,14 +136,14 @@ const Tuxedo = () => {
   const [deselectionTimers, setDeselectionTimers] = useState({});
 
   const tuxedoSuits = [
-    { id: 1, name: ' Velvet Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo1, price: 15000 },
-    { id: 2, name: 'Midnight Tuxedo  Suit ⭐⭐⭐⭐⭐', image: Tuxedo2, price: 15000 },
-    { id: 3, name: 'Ensemble Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo3, price: 15000 },
-    { id: 4, name: 'Classic Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo5, price: 15000 },
-    { id: 5, name: 'Slim Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo6, price: 15000 },
-    { id: 6, name: 'Designer Tuxedo Set ⭐⭐⭐⭐⭐', image: Tuxedo7, price: 15000 },
-    { id: 7, name: 'Royal Dinner Suit ⭐⭐⭐⭐⭐', image: Tuxedo8, price: 15000 },
-    { id: 8, name: 'Premium Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo9, price: 15000 }, // Added new tuxedo
+    { id: 46, name: ' Velvet Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo1, price: 15000 },
+    { id: 47, name: 'Midnight Tuxedo  Suit ⭐⭐⭐⭐⭐', image: Tuxedo2, price: 15000 },
+    { id: 48, name: 'Ensemble Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo3, price: 15000 },
+    { id: 49, name: 'Classic Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo5, price: 15000 },
+    { id: 50, name: 'Slim Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo6, price: 15000 },
+    { id: 51, name: 'Designer Tuxedo Set ⭐⭐⭐⭐⭐', image: Tuxedo7, price: 15000 },
+    { id: 52, name: 'Royal Dinner Suit ⭐⭐⭐⭐⭐', image: Tuxedo8, price: 15000 },
+    { id: 53, name: 'Premium Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo9, price: 15000 },
   ];
 
   const sizes = ['44', '46', '48', '50', '52', '54', '56', '58', '60'];
@@ -263,6 +265,10 @@ const Tuxedo = () => {
     setShowPayment(true);
   };
 
+  const handleProductClick = (item) => {
+    navigate(`/product/${item.id}`);
+  };
+
   const cartTotal = () => {
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     return storedCart.reduce((sum, item) => sum + item.price, 0);
@@ -371,7 +377,10 @@ const Tuxedo = () => {
             key={suit.id}
             className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
           >
-            <div className="h-64 w-full bg-gray-100 p-4 flex items-center justify-center">
+            <div 
+              className="h-64 w-full bg-gray-100 p-4 flex items-center justify-center cursor-pointer"
+              onClick={() => handleProductClick(suit)}
+            >
               <img
                 src={suit.image}
                 alt={suit.name}
@@ -380,7 +389,12 @@ const Tuxedo = () => {
               />
             </div>
             <div className="p-4 sm:p-5 text-center space-y-3">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900">{suit.name}</h3>
+              <h3 
+                className="text-lg sm:text-xl font-bold text-gray-900 cursor-pointer hover:text-blue-600"
+                onClick={() => handleProductClick(suit)}
+              >
+                {suit.name}
+              </h3>
               <p className="text-md sm:text-lg font-semibold text-blue-600">Ksh {suit.price.toLocaleString()}</p>
               {/* Size Selection */}
               <div className="text-sm sm:text-md font-semibold mb-2">Select Size:</div>

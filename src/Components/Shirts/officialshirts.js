@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Official1 from '../../Assets/Official/official1.jpg';
 import Official2 from '../../Assets/Official/official2.jpg';
 import Official3 from '../../Assets/Official/official3.jpg';
@@ -132,23 +133,24 @@ const Official = () => {
     return () => window.removeEventListener('storage', updateCart);
   }, []);
 
+  // Official shirts data matching the IDs from your ProductDetail component
   const shirts = [
-    { id: 1, image: Official1, name: 'Presidential Shirt ⭐⭐⭐⭐⭐', price: 3000 },
-    { id: 2, image: Official2, name: 'Presidential Shirt ⭐⭐⭐⭐⭐', price: 3000 },
-    { id: 3, image: Official3, name: 'Presidential Shirt ⭐⭐⭐⭐⭐', price: 3000 },
-    { id: 4, image: Official4, name: 'Presidential Shirt ⭐⭐⭐⭐⭐', price: 3000 },
-    { id: 5, image: Official5, name: 'French Cuff Formal ⭐⭐⭐⭐⭐', price: 1800 },
-    { id: 6, image: Official6, name: 'Slim Fit Office Shirt ⭐⭐⭐⭐⭐', price: 1800 },
-    { id: 7, image: Official7, name: 'Double Cuff Business ⭐⭐⭐⭐⭐', price: 1800 },
-    { id: 8, image: Official8, name: 'Designer Collar Shirt ⭐⭐⭐⭐⭐', price: 1800 },
-    { id: 9, image: Official9, name: 'Executive Checkered ⭐⭐⭐⭐⭐', price: 1800 },
-    { id: 10, image: Official10, name: 'Silk Blend Formal ⭐⭐⭐⭐⭐', price: 1800 },
-    { id: 11, image: Official11, name: 'Premium Twill Shirt ⭐⭐⭐⭐⭐', price: 1800 },
-    { id: 12, image: Official12, name: 'Classic Spread Collar ⭐⭐⭐⭐⭐', price: 1800 },
-    { id: 13, image: Official13, name: 'Luxury Official Shirt ⭐⭐⭐⭐⭐', price: 1800 },
-    { id: 14, image: Official14, name: 'Sophistic Official Shirt ⭐⭐⭐⭐⭐', price: 1800 },
-    { id: 15, image: Official15, name: 'Classic Official Shirt ⭐⭐⭐⭐⭐', price: 1800},
-    { id: 16, image: Official16, name: 'Exclusive Official Shirt ⭐⭐⭐⭐⭐', price: 1800}
+    { id: 58, image: Official1, name: 'Presidential Shirt ⭐⭐⭐⭐⭐', price: 3000 },
+    { id: 59, image: Official2, name: 'Presidential Shirt ⭐⭐⭐⭐⭐', price: 3000 },
+    { id: 60, image: Official3, name: 'Presidential Shirt ⭐⭐⭐⭐⭐', price: 3000 },
+    { id: 61, image: Official4, name: 'Presidential Shirt ⭐⭐⭐⭐⭐', price: 3000 },
+    { id: 62, image: Official5, name: 'French Cuff Formal ⭐⭐⭐⭐⭐', price: 1800 },
+    { id: 63, image: Official6, name: 'Slim Fit Office Shirt ⭐⭐⭐⭐⭐', price: 1800 },
+    { id: 64, image: Official7, name: 'Double Cuff Business ⭐⭐⭐⭐⭐', price: 1800 },
+    { id: 65, image: Official8, name: 'Designer Collar Shirt ⭐⭐⭐⭐⭐', price: 1800 },
+    { id: 66, image: Official9, name: 'Executive Checkered ⭐⭐⭐⭐⭐', price: 1800 },
+    { id: 67, image: Official10, name: 'Silk Blend Formal ⭐⭐⭐⭐⭐', price: 1800 },
+    { id: 68, image: Official11, name: 'Premium Twill Shirt ⭐⭐⭐⭐⭐', price: 1800 },
+    { id: 69, image: Official12, name: 'Classic Spread Collar ⭐⭐⭐⭐⭐', price: 1800 },
+    { id: 70, image: Official13, name: 'Luxury Official Shirt ⭐⭐⭐⭐⭐', price: 1800 },
+    { id: 71, image: Official14, name: 'Sophistic Official Shirt ⭐⭐⭐⭐⭐', price: 1800 },
+    { id: 72, image: Official15, name: 'Classic Official Shirt ⭐⭐⭐⭐⭐', price: 1800},
+    { id: 73, image: Official16, name: 'Exclusive Official Shirt ⭐⭐⭐⭐⭐', price: 1800}
   ];
 
   const handleAddToCart = (item) => {
@@ -258,14 +260,16 @@ const Official = () => {
             key={shirt.id}
             className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
           >
-            <div className="aspect-square bg-gray-100 p-5 flex items-center justify-center">
-              <img
-                src={shirt.image}
-                alt={shirt.name}
-                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-              />
-            </div>
+            <Link to={`/product/${shirt.id}`} onClick={() => window.scrollTo(0, 0)}>
+              <div className="aspect-square bg-gray-100 p-5 flex items-center justify-center">
+                <img
+                  src={shirt.image}
+                  alt={shirt.name}
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+              </div>
+            </Link>
             <div className="p-5 text-center space-y-4">
               <h3 className="text-xl sm:text-lg font-bold text-gray-900">{shirt.name}</h3>
               <p className="text-blue-600 font-bold text-xl">Ksh {shirt.price.toLocaleString()}</p>
@@ -307,8 +311,3 @@ const Official = () => {
 };
 
 export default Official;
-
-
-
-
-

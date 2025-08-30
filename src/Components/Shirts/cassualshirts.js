@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Cassual1 from '../../Assets/Cassual/cassual1.jpg';
 import Cassual2 from '../../Assets/Cassual/cassual2.jpg';
 import Cassual3 from '../../Assets/Cassual/cassual3.jpg';
@@ -119,24 +120,28 @@ const Cassual = () => {
     return () => window.removeEventListener('storage', updateCart);
   }, []);
 
+  // Casual shirts data matching the IDs from your ProductDetail component
   const casualShirts = [
     {
-      id: 1,
+      id: 102,
       name: 'Urban Streetwear Shirt ⭐⭐⭐⭐⭐',
       image: Cassual1,
-      price: 1700
+      price: 2000,
+      description: '🔥 Trendy urban streetwear shirt for casual occasions'
     },
     {
-      id: 2,
+      id: 103,
       name: 'Designer Denim Casual ⭐⭐⭐⭐⭐',
       image: Cassual2,
-      price: 1700
+      price: 2000,
+      description: '🔥 Premium designer denim shirt for a stylish look'
     },
     {
-      id: 3,
+      id: 104,
       name: 'Premium Linen Blend ⭐⭐⭐⭐⭐',
       image: Cassual3,
-      price: 1700
+      price: 2000,
+      description: '🔥 Comfortable linen blend shirt perfect for casual wear'
     }
   ];
 
@@ -247,14 +252,16 @@ const Cassual = () => {
             key={shirt.id}
             className="bg-white rounded-xl shadow-lg hover:shadow-xl transform transition duration-300 group overflow-hidden"
           >
-            <div className="h-64 w-full bg-gray-200 p-4 flex items-center justify-center">
-              <img
-                src={shirt.image}
-                alt={shirt.name}
-                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                loading="lazy"
-              />
-            </div>
+            <Link to={`/product/${shirt.id}`} onClick={() => window.scrollTo(0, 0)}>
+              <div className="h-64 w-full bg-gray-200 p-4 flex items-center justify-center">
+                <img
+                  src={shirt.image}
+                  alt={shirt.name}
+                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                  loading="lazy"
+                />
+              </div>
+            </Link>
             <div className="p-5 text-center space-y-3">
               <h3 className="text-xl sm:text-lg font-bold text-gray-900">{shirt.name}</h3>
               <p className="text-lg font-semibold text-blue-600">Ksh {shirt.price.toLocaleString()}</p>
@@ -296,4 +303,3 @@ const Cassual = () => {
 };
 
 export default Cassual;
-

@@ -19,6 +19,7 @@ import Jeans from './Components/Jeans/jeans';
 import Leather from './Components/Leather/leather'; 
 import Payment from './Components/Payment/payment'; 
 import ProductDetails from './Components/Product/productDetails';
+ // Import the ProductDetail component
 
 function App() {
   return (
@@ -42,6 +43,8 @@ function App() {
           {/* Shirt Routes */}
           <Route path="/shirts/cassual" element={<Cassual />} />
           <Route path="/shirts/official" element={<Official />} />
+          
+        
           
           {/* Other Categories Routes */}
           <Route path="/jackets/leather" element={<Leather />} />
