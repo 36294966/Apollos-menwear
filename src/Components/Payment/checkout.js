@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, MapPin, User, Phone, Mail, CreditCard, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, CheckCircle, MapPin, User, Phone, Mail, CreditCard, ShoppingCart, Trash2 } from 'lucide-react';
 
 const Checkout = () => {
   const location = useLocation();
@@ -44,6 +44,47 @@ const Checkout = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Calculate cart total
+  const calculateTotal = (items) => {
+    return items.reduce((sum, item) => {
+      const price = parseFloat(item.price) || 0;
+      const quantity = parseInt(item.quantity) || 1;
+      return sum + (price * quantity);
+    }, 0);
+  };
+
+  // Update localStorage and dispatch event
+  const updateCartStorage = (items) => {
+    localStorage.setItem('cart', JSON.stringify(items));
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  // Remove item from cart
+  const removeItemFromCart = (index) => {
+    const updatedCart = [...cartItems];
+    updatedCart.splice(index, 1);
+    setCartItems(updatedCart);
+    
+    const newTotal = calculateTotal(updatedCart);
+    setCartTotal(newTotal);
+    
+    updateCartStorage(updatedCart);
+  };
+
+  // Update item quantity
+  const updateItemQuantity = (index, newQuantity) => {
+    if (newQuantity < 1) return;
+    
+    const updatedCart = [...cartItems];
+    updatedCart[index].quantity = newQuantity;
+    setCartItems(updatedCart);
+    
+    const newTotal = calculateTotal(updatedCart);
+    setCartTotal(newTotal);
+    
+    updateCartStorage(updatedCart);
+  };
+
   // Load cart data and shipping options
   useEffect(() => {
     // Load cart items from state or localStorage
@@ -56,12 +97,7 @@ const Checkout = () => {
       setCartItems(storedCart);
       
       // Calculate total from stored cart
-      const calculatedTotal = storedCart.reduce((sum, item) => {
-        const price = parseFloat(item.price) || 0;
-        const quantity = parseInt(item.quantity) || 1;
-        return sum + (price * quantity);
-      }, 0);
-      
+      const calculatedTotal = calculateTotal(storedCart);
       setCartTotal(calculatedTotal);
     }
 
@@ -389,6 +425,16 @@ const Checkout = () => {
     navigate(returnPath);
   };
 
+  // Navigate to home
+  const navigateToHome = () => {
+    navigate('/');
+  };
+
+  // Navigate to cart
+  const navigateToCart = () => {
+    navigate('/cart');
+  };
+
   // Calculate costs
   const shippingCost = selectedShipping ? parseInt(selectedShipping.cost) : 0;
   const total = cartTotal + shippingCost;
@@ -524,10 +570,33 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4">
+      {/* Navigation Bar */}
+      <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+          <button
+            onClick={navigateToHome}
+            className="flex items-center text-blue-700 hover:text-blue-900 font-medium"
+          >
+            <ArrowLeft className="h-5 w-5 mr-1" />
+            Back to Shop
+          </button>
+          
+          <h1 className="text-xl font-bold text-gray-800">Sir Apollo's MenWear</h1>
+          
+          <button
+            onClick={navigateToCart}
+            className="flex items-center text-blue-700 hover:text-blue-900 font-medium"
+          >
+            <ShoppingCart className="h-5 w-5 mr-1" />
+            Cart
+          </button>
+        </div>
+      </div>
+      
       <div ref={topRef} className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden mt-24">
         {/* Header with blinking text */}
         <div className="bg-gradient-to-r from-blue-900 to-purple-800 py-6 px-8 text-center">
-          <h1 className="text-4xl font-bold text-white blink">Sir Apollo's MenWear</h1>
+          <h1 className="text-4xl font-bold text-white blink">Checkout</h1>
           <p className="text-blue-200 mt-2">Complete your purchase</p>
         </div>
         
@@ -706,7 +775,7 @@ const Checkout = () => {
             
             <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
               {cartItems.map((item, index) => (
-                <div key={index} className="flex items-start border-b pb-4">
+                <div key={index} className="flex items-start border-b pb-4 relative">
                   <img 
                     src={item.image} 
                     alt={item.name}
@@ -720,11 +789,35 @@ const Checkout = () => {
                     {item.size && item.size !== 'Not Selected' && (
                       <p className="text-xs text-gray-600">Size: {item.size}</p>
                     )}
-                    <p className="text-xs text-gray-600">Qty: {item.quantity || 1}</p>
-                    <p className="text-sm font-medium text-blue-700">
+                    
+                    <div className="flex items-center mt-1">
+                      <button 
+                        onClick={() => updateItemQuantity(index, (item.quantity || 1) - 1)}
+                        className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-sm"
+                      >
+                        -
+                      </button>
+                      <span className="mx-2 text-sm">{item.quantity || 1}</span>
+                      <button 
+                        onClick={() => updateItemQuantity(index, (item.quantity || 1) + 1)}
+                        className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-sm"
+                      >
+                        +
+                      </button>
+                    </div>
+                    
+                    <p className="text-sm font-medium text-blue-700 mt-1">
                       KES {((item.price || 0) * (item.quantity || 1)).toLocaleString('en-KE', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
+                  
+                  <button
+                    onClick={() => removeItemFromCart(index)}
+                    className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+                    aria-label="Remove item"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               ))}
             </div>
