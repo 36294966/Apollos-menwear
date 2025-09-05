@@ -17,8 +17,9 @@ import Official from './Components/Shirts/officialshirts';
 import Cart from './Components/cart'; 
 import Jeans from './Components/Jeans/jeans'; 
 import Leather from './Components/Leather/leather'; 
-import Payment from './Components/Payment/payment'; 
+import Payment from './Components/Payment/checkout'; 
 import ProductDetails from './Components/Product/productDetails';
+import Checkout from './Components/Payment/checkout';
  // Import the ProductDetail component
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
           {/* Cart and Payment Routes */}
           <Route path="/cart" element={<Cart />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/checkout" element={<Checkout />} />
           
           {/* Product Detail Route (corrected) */}
           <Route path="/product/:id" element={<ProductDetails />} />  {/* Corrected the way we pass the component */}

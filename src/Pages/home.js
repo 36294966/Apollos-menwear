@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, ChevronRight, ShoppingCart, XCircle, AlertCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { CheckCircle, ChevronRight, ShoppingCart, AlertCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
+// Asset imports (all your images)
 import Photo1 from '../Assets/Appolo/photo1.jpeg';
 import Photo2 from '../Assets/Appolo/photo2.jpeg';
 import Photo3 from '../Assets/Appolo/photo3.jpeg';
@@ -99,7 +100,6 @@ import Jean14 from '../Assets/Jeans/jean14.jpg';
 import Jean15 from '../Assets/Jeans/jean15.jpg';
 import Jean16 from '../Assets/Jeans/jean16.jpg';
 
-
 import Jacket1 from '../Assets/Jackets/jacket1.jpg';
 import Jacket2 from '../Assets/Jackets/jacket2.jpg';
 import Jacket3 from '../Assets/Jackets/jacket3.jpg';
@@ -114,89 +114,105 @@ import Belt6 from '../Assets/Accessories/belt6.jpg';
 import Belt7 from '../Assets/Accessories/belt7.jpg';
 import Belt8 from '../Assets/Accessories/belt8.jpg';
 
-
 const Home = () => {
+  const navigate = useNavigate();
+
   const [cartCount, setCartCount] = useState(0);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [paymentImmediate, setPaymentImmediate] = useState(false);
   const [selectedSizeForSuit, setSelectedSizeForSuit] = useState({});
   const [hoveredItemId, setHoveredItemId] = useState(null);
   const [sizeError, setSizeError] = useState({});
   const [showSizeAlert, setShowSizeAlert] = useState(false);
-  const [lastSelectedItemId, setLastSelectedItemId] = useState(null);
   const [recentlySelectedSize, setRecentlySelectedSize] = useState({});
 
   const Sizes = ['44', '46', '48', '50', '52', '54', '56', '58', '60'];
 
-  // Check if item requires size selection
+  // Utility: check if item requires size
   const requiresSize = (item) => {
     return item.category !== 'jeans' && item.category !== 'jacket' && item.category !== 'belt' && item.category !== 'shirt';
   };
 
-  // Handle size selection - only allow one item to have a selected size at a time
+  // Handle size selection
   const handleSizeSelection = (itemId, size) => {
-    // Clear all previous selections and set only this item's size
     setSelectedSizeForSuit({ [itemId]: size });
-    setLastSelectedItemId(itemId);
     setSizeError(prev => ({ ...prev, [itemId]: false }));
-    
-    // Set the recently selected size with a timer to clear it
-    setRecentlySelectedSize({ [itemId]: true });
+    setRecentlySelectedSize(prev => ({ ...prev, [itemId]: true }));
     setTimeout(() => {
       setRecentlySelectedSize(prev => ({ ...prev, [itemId]: false }));
-    }, 2000); // Highlight disappears after 2 seconds
+    }, 2000);
   };
 
-  // Handle adding to cart
-  const handleAddToCart = (item, event) => {
-    if (event) event.preventDefault();
-    
-    // Check if size is required but not selected
+  // Handle add to cart
+  const handleAddToCart = (item, e) => {
+    if (e) e.preventDefault();
+
     if (requiresSize(item) && !selectedSizeForSuit[item.id]) {
       setSizeError(prev => ({ ...prev, [item.id]: true }));
       setShowSizeAlert(true);
       setTimeout(() => setShowSizeAlert(false), 3000);
+      // Remove error after 3 seconds
+      setTimeout(() => {
+        setSizeError(prev => {
+          const newErr = { ...prev };
+          delete newErr[item.id];
+          return newErr;
+        });
+      }, 3000);
       return;
     }
-    
+
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     const newItem = {
-      ...item,
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
       size: requiresSize(item) ? (selectedSizeForSuit[item.id] || 'Not Selected') : 'N/A',
       addedAt: new Date().toISOString(),
     };
     localStorage.setItem('cart', JSON.stringify([...storedCart, newItem]));
     window.dispatchEvent(new Event('storage'));
     alert(`${item.name} added to cart`);
-    
-    // Clear the size selection after adding to cart
-    setSelectedSizeForSuit({});
-    setLastSelectedItemId(null);
+    // Clear selection
+    setSelectedSizeForSuit(prev => {
+      const newState = { ...prev };
+      delete newState[item.id];
+      return newState;
+    });
     setSizeError(prev => ({ ...prev, [item.id]: false }));
   };
 
-  // Handle purchase click
-  const handlePurchaseClick = (item, event) => {
-    if (event) event.preventDefault();
-    
-    // Check if size is required but not selected
+  // Handle purchase
+  const handlePurchaseClick = (item, e) => {
+    if (e) e.preventDefault();
+
     if (requiresSize(item) && !selectedSizeForSuit[item.id]) {
       setSizeError(prev => ({ ...prev, [item.id]: true }));
       setShowSizeAlert(true);
       setTimeout(() => setShowSizeAlert(false), 3000);
+      // Remove error after 3 seconds
+      setTimeout(() => {
+        setSizeError(prev => {
+          const newErr = { ...prev };
+          delete newErr[item.id];
+          return newErr;
+        });
+      }, 3000);
       return;
     }
-    
-    setSelectedItem(item);
-    setPaymentImmediate(true);
-    setShowModal(true);
-    
-    // Reset the size error for this specific item
+
+    const productData = {
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      description: item.description || item.name,
+      size: requiresSize(item) ? (selectedSizeForSuit[item.id] || 'Not Selected') : 'N/A',
+    };
+    navigate('/checkout', { state: { product: productData } });
     setSizeError(prev => ({ ...prev, [item.id]: false }));
   };
 
-  // Update cart count
+  // update cart count
   useEffect(() => {
     const updateCart = () => {
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -205,9 +221,10 @@ const Home = () => {
     updateCart();
     window.addEventListener('storage', updateCart);
     return () => window.removeEventListener('storage', updateCart);
-  }, []);
-  
- const threePieceSuits = [
+  },);
+
+  // Data arrays for categories
+  const threePieceSuits = [
     { id: 1, name: 'Executive Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo1, price: 13000, category: 'three-piece' },
     { id: 2, name: 'Elegance Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo2, price: 13000, category: 'three-piece' },
     { id: 3, name: 'Premium Three-Piece Suit ⭐⭐⭐⭐⭐', image: Photo3, price: 13000, category: 'three-piece' },
@@ -292,7 +309,6 @@ const Home = () => {
     { id: 71, name: 'Sophistic Official Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official14 },
     { id: 72, name: 'Classic Official Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official15 },
     { id: 73, name: 'Exclusive Official Shirt⭐⭐⭐⭐⭐', price: 1800, description: '💥Official Shirt perfect for formal African occasions.', category: 'Official Shirt', image: Official16},
-    
   ];
 
   const jeans = [
@@ -323,16 +339,16 @@ const Home = () => {
 
   const belts = [
     { id: 94, name: '💯Premium Leather Belt', image: Belt1, price: 2000, category: 'belt' },
-{ id: 95, name: '💯Premium Leather Belt', image: Belt2, price: 2000, category: 'belt' },
-{ id: 96, name: '💯Premium Leather Belt', image: Belt3, price: 2000, category: 'belt' },
-{ id: 97, name: '💯Premium Leather Belt', image: Belt4, price: 2000, category: 'belt' },
+    { id: 95, name: '💯Premium Leather Belt', image: Belt2, price: 2000, category: 'belt' },
+    { id: 96, name: '💯Premium Leather Belt', image: Belt3, price: 2000, category: 'belt' },
+    { id: 97, name: '💯Premium Leather Belt', image: Belt4, price: 2000, category: 'belt' },
     { id: 98, name: '💯Premium Leather Belt', image: Belt5, price: 2000, category: 'belt' },
     { id: 99, name: '💯Premium Leather Belt', image: Belt6, price: 2000, category: 'belt' },
     { id: 100, name: '💯Stylish Brown Belt', image: Belt7, price: 2000, category: 'belt' },
     { id: 101, name: '💯Elegant Black Belt', image: Belt8, price: 2000, category: 'belt' },
   ];
 
-  // Categories for display
+  // Categories array for rendering
   const categories = [
     { title: 'Three-Piece Suits', items: threePieceSuits, link: '/suits/3piecesuits' },
     { title: 'Two-Piece Suits', items: twoPieceSuits, link: '/suits/2piecesuits' },
@@ -344,26 +360,9 @@ const Home = () => {
     { title: 'Belts', items: belts, link: '/accessories/belt' },
   ];
 
-  // Handle mouse hover to zoom item
-  const handleMouseEnter = (id) => {
-    setHoveredItemId(id);
-  };
-
-  // Handle mouse leave to remove zoom effect
-  const handleMouseLeave = () => {
-    setHoveredItemId(null);
-  };
-
-  // Function to close modal
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedItem(null);
-    setPaymentImmediate(false);
-    
-    // Clear the size selection when modal closes
-    setSelectedSizeForSuit({});
-    setLastSelectedItemId(null);
-  };
+  // Mouse hover handlers
+  const handleMouseEnter = (id) => setHoveredItemId(id);
+  const handleMouseLeave = () => setHoveredItemId(null);
 
   return (
     <section className="p-4 sm:p-6 md:p-8 bg-gray-50 min-h-screen overflow-x-hidden">
@@ -375,13 +374,15 @@ const Home = () => {
         </div>
       )}
 
-      {/* Categories */}
+      {/* Render categories and items */}
       {categories.map((category) => (
         <div key={category.title} className="mb-12">
+          {/* Category Header */}
           <div className="bg-gradient-to-r from-green-400 to-blue-500 text-white text-lg sm:text-xl p-4 sm:p-6 text-center font-bold rounded-xl mb-6 mt-16 mx-2 sm:mx-4 animate-pulse">
-            <p>{category.title} – 🔥 Hurry Up!! 🚀 Limited Time Offers! 💯 Wool Fading Free </p>
+            <p>{category.title} – 🔥 Hurry Up!! 🚀 Limited Time Offers! 💯 Wool Fading Free</p>
           </div>
 
+          {/* Items Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 px-2 sm:px-0">
             {category.items.map((item) => (
               <div
@@ -390,6 +391,7 @@ const Home = () => {
                 onMouseEnter={() => handleMouseEnter(item.id)}
                 onMouseLeave={handleMouseLeave}
               >
+                {/* Image container with zoom effect on hover */}
                 <div className={`w-full bg-gray-100 p-4 flex items-center justify-center transition-all duration-300 ${hoveredItemId === item.id ? 'transform scale-105' : ''}`}>
                   <Link to={`/product/${item.id}`}>
                     <img
@@ -401,7 +403,7 @@ const Home = () => {
                   </Link>
                 </div>
 
-                {/* View More Button (visible on hover) */}
+                {/* View more button on hover */}
                 {hoveredItemId === item.id && (
                   <div className="absolute top-3 right-3">
                     <Link
@@ -413,13 +415,14 @@ const Home = () => {
                   </div>
                 )}
 
+                {/* Item details */}
                 <div className="p-4 text-center space-y-3">
                   <h3 className="text-base sm:text-lg font-bold line-clamp-2">{item.name}</h3>
                   <div className="flex justify-center">
                     <span className="text-blue-600 font-bold text-lg sm:text-xl">Ksh {item.price.toLocaleString()}</span>
                   </div>
 
-                  {/* Sizes - Scrollable container */}
+                  {/* Size selection (if needed) */}
                   {requiresSize(item) && (
                     <div className="flex flex-col items-start space-y-2">
                       <span className={`text-sm font-medium ${sizeError[item.id] ? 'text-red-600' : 'text-gray-700'}`}>
@@ -454,7 +457,7 @@ const Home = () => {
                     </div>
                   )}
 
-                  {/* Buttons */}
+                  {/* Buttons: Purchase & Add to Cart */}
                   <div className="space-y-2 mt-3">
                     <button
                       onClick={(e) => handlePurchaseClick(item, e)}
@@ -473,126 +476,17 @@ const Home = () => {
               </div>
             ))}
           </div>
-          
 
+          {/* View more link */}
           <div className="flex justify-end mt-6 mb-8 px-2 sm:px-0">
-            <Link
-              to={category.link}
-              className="text-lg sm:text-xl font-bold text-blue-600 hover:text-blue-800 flex items-center space-x-2"
-            >
-              <span>View More</span> <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+            <Link to={category.link} className="text-lg sm:text-xl font-bold text-blue-600 hover:text-blue-800 flex items-center space-x-2">
+              <span>View More</span>
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </Link>
           </div>
         </div>
       ))}
-
-      {/* Payment Popup Modal */}
-      {showModal && selectedItem && (
-        <PaymentPopup 
-          item={selectedItem} 
-          selectedSize={selectedSizeForSuit[selectedItem.id]} 
-          onClose={handleCloseModal} 
-        />
-      )}
     </section>
-  );
-};
-
-// Payment Popup component (remains the same)
-const PaymentPopup = ({ item, selectedSize, onClose }) => {
-  const [amount, setAmount] = useState('');
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const paymentDetails = {
-    paybill: '542542',
-    account: '378179',
-  };
-
-  const handlePaymentConfirmation = () => {
-    const content = `CASUAL WEAR PURCHASE\n-------------------\nItem: ${item?.name}\nProduct ID: ${item?.id}\nSize: ${selectedSize || 'Not Selected'}\nPaybill: ${paymentDetails.paybill}\nAccount: ${paymentDetails.account}\nAmount Paid: Ksh ${amount || '________'}\nStandard Price: Ksh ${item?.price?.toLocaleString()}`;
-    
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `casual_payment_${item?.id}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    setPaymentSuccess(true);
-    setTimeout(onClose, 1500);
-  };
-    
-
-  return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm p-4">
-      <div className="bg-white p-6 rounded-2xl w-full max-w-md space-y-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
-          {paymentSuccess ? (
-            <>
-              <CheckCircle className="w-6 h-6 text-green-500" />
-              Payment Confirmed!
-            </>
-          ) : (
-            'Complete Purchase'
-          )}
-        </h2>
-
-        {!paymentSuccess ? (
-          <>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
-                <span className="font-medium text-sm sm:text-base">Paybill:</span>
-                <span className="font-mono text-blue-600 font-bold">{paymentDetails.paybill}</span>
-              </div>
-              
-              <div className="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
-                <span className="font-medium text-sm sm:text-base">Account:</span>
-                <span className="font-mono text-blue-600 font-bold">{paymentDetails.account}</span>
-              </div>
-
-              <div className="bg-green-50 p-4 rounded-lg">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-sm sm:text-base">Standard Price:</span>
-                  <span className="font-mono text-green-600 font-bold">Ksh {item?.price?.toLocaleString()}</span>
-                </div>
-              </div>
-
-              <input
-                type="number"
-                placeholder="Enter amount (Ksh)"
-                className="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value.replace(/\D/g, ''))}
-                min="1700"
-              />
-            </div>
-
-            <div className="flex gap-4">
-              <button
-                onClick={handlePaymentConfirmation}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
-              >
-                <CheckCircle className="w-5 h-5" />
-                Confirm Payment
-              </button>
-              <button
-                onClick={onClose}
-                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
-              >
-                <XCircle className="w-5 h-5" />
-                Cancel
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="text-center text-green-600">
-            <p>Transaction receipt downloaded successfully</p>
-            <p className="text-sm text-gray-500 mt-2">Closing automatically...</p>
-          </div>
-        )}
-      </div>
-    </div>
   );
 };
 

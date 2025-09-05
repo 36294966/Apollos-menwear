@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, XCircle, ShoppingCart, ArrowLeft } from 'lucide-react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { CheckCircle, ShoppingCart, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // Import socks images
 import Socks1 from '../../Assets/Accessories/socks1.jpg';
@@ -13,117 +13,23 @@ import Official1 from '../../Assets/Official/official1.jpg';
 import Jean1 from '../../Assets/Jeans/jean1.jpeg';
 import Jacket1 from '../../Assets/Jackets/jacket1.jpg';
 
-const PaymentPopup = ({ onClose, item }) => {
-  const paybillNumber = '542542';
-  const accountNumber = '378179';
-  const [amount, setAmount] = useState(item?.price?.replace('Ksh ', '') || '');
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-
-  const handleDownload = () => {
-    const content = `
-Payment Details
----------------
-Item: ${item?.name}
-Paybill Number: ${paybillNumber}
-Account Number: ${accountNumber}
-Amount: Ksh ${amount || '[Enter amount here]'}
-`;
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'socks_payment.txt';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    setPaymentSuccess(true);
-    setTimeout(() => {
-      setPaymentSuccess(false);
-      onClose();
-    }, 1500);
-  };
-
-  const handleClose = () => {
-    setPaymentSuccess(false);
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div className="bg-white p-6 sm:p-8 rounded-2xl w-[95%] max-w-md space-y-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2 mb-4">
-          {paymentSuccess ? (
-            <>
-              <CheckCircle className="w-6 h-6 text-green-500" />
-              Payment Verified!
-            </>
-          ) : (
-            'Payment Details'
-          )}
-        </h2>
-
-        {!paymentSuccess ? (
-          <>
-            {/* Payment info styled similar to official.js */}
-            <div className="space-y-4">
-              <div className="flex justify-between items-center bg-gray-50 p-3 sm:p-4 rounded-lg">
-                <span className="font-medium text-sm sm:text-base">Paybill:</span>
-                <span className="font-mono text-blue-600 font-bold">{paybillNumber}</span>
-              </div>
-              <div className="flex justify-between items-center bg-gray-50 p-3 sm:p-4 rounded-lg">
-                <span className="font-medium text-sm sm:text-base">Account:</span>
-                <span className="font-mono text-blue-600 font-bold">{accountNumber}</span>
-              </div>
-              <div className="bg-green-50 p-3 sm:p-4 rounded-lg">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-sm sm:text-base">Price:</span>
-                  <span className="font-mono text-green-600 font-bold">Ksh {item?.price.replace('Ksh ', '')}</span>
-                </div>
-              </div>
-              <input
-                type="number"
-                placeholder="Enter amount (Ksh)"
-                className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </div>
-            {/* Buttons */}
-            <div className="flex gap-3 sm:gap-4 mt-4">
-              <button
-                onClick={handleDownload}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 sm:py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
-              >
-                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-                PAY NOW
-              </button>
-              <button
-                onClick={handleClose}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-black py-2 sm:py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
-              >
-                <XCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-                Close
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="text-center text-green-600">
-            <p>Receipt downloaded successfully</p>
-            <p className="text-sm sm:text-base mt-2">Closing automatically...</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 const Socks = () => {
-  const [showPayment, setShowPayment] = useState(false);
+  const navigate = useNavigate();
+  const [cartCount, setCartCount] = useState(0);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'detail'
-  const { id } = useParams();
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    const updateCart = () => {
+      const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+      setCartCount(storedCart.length);
+    };
+
+    updateCart();
+    window.addEventListener('storage', updateCart);
+    return () => window.removeEventListener('storage', updateCart);
+  }, []);
 
   // All socks items
   const socksItems = [
@@ -131,7 +37,7 @@ const Socks = () => {
       id: 105, 
       name: '🔥Cotton Socks', 
       image: Socks1, 
-      price: 'Ksh 300',
+      price: 300,
       description: '🌟 Premium quality cotton socks with excellent breathability and comfort for all-day wear.',
       category: 'Socks'
     },
@@ -139,7 +45,7 @@ const Socks = () => {
       id: 106, 
       name: '🔥Formal Dress Sock', 
       image: Socks2, 
-      price: 'Ksh 300',
+      price: 300,
       description: '🌟 Elegant formal dress socks perfect for business attire and special occasions.',
       category: 'Socks'
     },
@@ -147,7 +53,7 @@ const Socks = () => {
       id: 107, 
       name: '🔥Colorful Crew Socks', 
       image: Socks3, 
-      price: 'Ksh 300',
+      price: 300,
       description: '🌟 Vibrant and stylish crew socks that add a pop of color to any outfit while providing comfort.',
       category: 'Socks'
     },
@@ -158,7 +64,7 @@ const Socks = () => {
     { 
       id: 106, 
       name: '🔥Formal Dress Sock', 
-      price: 'Ksh 300', 
+      price: 300, 
       description: '🌟 Elegant formal dress socks perfect for business attire.', 
       category: 'Socks', 
       image: Socks2
@@ -166,7 +72,7 @@ const Socks = () => {
     { 
       id: 107, 
       name: '🔥Colorful Crew Socks', 
-      price: 'Ksh 300', 
+      price: 300, 
       description: '🌟 Vibrant and stylish crew socks for any outfit.', 
       category: 'Socks', 
       image: Socks3
@@ -174,7 +80,7 @@ const Socks = () => {
     { 
       id: 94, 
       name: '🔥Premium Leather Belt', 
-      price: 'Ksh 2,000', 
+      price: 2000, 
       description: '🌟 High-quality leather belt with adjustable fit and sturdy buckle.', 
       category: 'Belt', 
       image: Belt1
@@ -182,7 +88,7 @@ const Socks = () => {
     { 
       id: 58, 
       name: 'Presidential Shirt', 
-      price: 'Ksh 3,000', 
+      price: 3000, 
       description: '💥Elegant presidential shirt perfect for formal occasions.', 
       category: 'Official Shirt', 
       image: Official1
@@ -194,7 +100,7 @@ const Socks = () => {
     { 
       id: 108, 
       name: '🔥Athletic Sports Socks', 
-      price: 'Ksh 350', 
+      price: 350, 
       description: '🌟 Comfortable sports socks with extra cushioning for athletic activities.', 
       category: 'Socks', 
       image: Socks1
@@ -202,7 +108,7 @@ const Socks = () => {
     { 
       id: 109, 
       name: '🔥Ankle Socks Pack', 
-      price: 'Ksh 400', 
+      price: 400, 
       description: '🌟 Pack of 3 comfortable ankle socks perfect for casual wear.', 
       category: 'Socks', 
       image: Socks2
@@ -210,7 +116,7 @@ const Socks = () => {
     { 
       id: 95, 
       name: '🔥Classic Brown Belt', 
-      price: 'Ksh 1,800', 
+      price: 1800, 
       description: '🌟 Classic brown leather belt that matches with any outfit.', 
       category: 'Belt', 
       image: Belt1
@@ -218,27 +124,12 @@ const Socks = () => {
     { 
       id: 59, 
       name: 'Business Casual Shirt', 
-      price: 'Ksh 2,500', 
+      price: 2500, 
       description: '💥Perfect business casual shirt for office wear.', 
       category: 'Official Shirt', 
       image: Official1
     },
   ];
-
-  // Set selected item based on URL parameter
-  useEffect(() => {
-    if (id) {
-      const itemId = parseInt(id);
-      const item = socksItems.find(sock => sock.id === itemId) || 
-                   recommendedProducts.find(product => product.id === itemId) ||
-                   usersAlsoLike.find(product => product.id === itemId);
-      if (item) {
-        setSelectedItem(item);
-        setViewMode('detail');
-        window.scrollTo(0, 0);
-      }
-    }
-  }, [id]);
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
@@ -259,8 +150,18 @@ const Socks = () => {
       e.preventDefault();
       e.stopPropagation();
     }
-    setSelectedItem(item);
-    setShowPayment(true);
+    
+    // Prepare product data to pass to checkout
+    const productData = {
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      description: item.description
+    };
+    
+    // Navigate to checkout page with product data
+    navigate('/checkout', { state: { product: productData } });
   };
 
   const handleAddToCart = (item, e = null) => {
@@ -280,9 +181,12 @@ const Socks = () => {
     } else {
       // Item not in cart, add new item
       const newItem = {
-        ...item,
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
         quantity: 1,
-        price: parseFloat(item.price.replace('Ksh ', '').replace(',', '')),
+        addedAt: new Date().toISOString(),
       };
       newCart = [...storedCart, newItem];
     }
@@ -291,6 +195,11 @@ const Socks = () => {
     window.dispatchEvent(new Event('storage'));
     
     alert(`${item.name} ${existingItemIndex >= 0 ? 'quantity updated in' : 'added to'} cart`);
+  };
+
+  const cartTotal = () => {
+    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    return storedCart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
   };
 
   // Check if item is in cart
@@ -336,7 +245,7 @@ const Socks = () => {
           
           <div className="w-full md:w-1/2 p-6 space-y-4">
             <h2 className="text-2xl font-bold text-gray-800">{selectedItem.name}</h2>
-            <p className="text-xl text-blue-600 font-bold">{selectedItem.price}</p>
+            <p className="text-xl text-blue-600 font-bold">Ksh {selectedItem.price.toLocaleString()}</p>
             <p className="text-gray-700">{selectedItem.description}</p>
             
             {/* Users may also like section */}
@@ -357,7 +266,7 @@ const Socks = () => {
                       />
                     </div>
                     <p className="text-xs font-medium text-gray-800 truncate">{product.name}</p>
-                    <p className="text-xs text-blue-600 font-bold">{product.price}</p>
+                    <p className="text-xs text-blue-600 font-bold">Ksh {product.price.toLocaleString()}</p>
                   </div>
                 ))}
               </div>
@@ -406,7 +315,7 @@ const Socks = () => {
                 </div>
                 <div className="p-4 text-center">
                   <h4 className="font-semibold text-gray-800 truncate">{product.name}</h4>
-                  <p className="text-blue-600 font-bold">{product.price}</p>
+                  <p className="text-blue-600 font-bold">Ksh {product.price.toLocaleString()}</p>
                   <div className="mt-3 space-y-2">
                     <button
                       onClick={(e) => {
@@ -452,25 +361,27 @@ const Socks = () => {
             key={sock.id}
             className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
           >
-            <Link to={`/product/${sock.id}`}>
-              <div className="h-48 sm:h-60 md:h-72 bg-gray-100 p-4 flex items-center justify-center cursor-pointer">
-                <img
-                  src={sock.image}
-                  alt={sock.name}
-                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                  loading="lazy"
-                />
-              </div>
-            </Link>
+            <div 
+              className="h-48 sm:h-60 md:h-72 bg-gray-100 p-4 flex items-center justify-center cursor-pointer"
+              onClick={() => handleItemClick(sock)}
+            >
+              <img
+                src={sock.image}
+                alt={sock.name}
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </div>
             
             <div className="p-5 text-center space-y-4">
-              <Link to={`/product/${sock.id}`}>
-                <h3 className="text-xl sm:text-lg font-bold text-gray-800 cursor-pointer hover:text-blue-600">
-                  {sock.name}
-                </h3>
-              </Link>
+              <h3 
+                className="text-xl sm:text-lg font-bold text-gray-800 cursor-pointer hover:text-blue-600"
+                onClick={() => handleItemClick(sock)}
+              >
+                {sock.name}
+              </h3>
               
-              <p className="text-blue-600 font-bold text-xl">{sock.price}</p>
+              <p className="text-blue-600 font-bold text-xl">Ksh {sock.price.toLocaleString()}</p>
               
               <p className="text-sm text-gray-600 line-clamp-2">{sock.description}</p>
               
@@ -509,21 +420,92 @@ const Socks = () => {
 
   return (
     <section className="p-6 sm:p-10 bg-gray-50 min-h-screen">
+      {/* Cart Button */}
+      <div className="fixed top-16 right-5 z-40">
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="relative bg-white p-3 rounded-full shadow-lg hover:shadow-xl transition"
+        >
+          <ShoppingCart className="w-6 h-6 text-gray-700" />
+          {cartCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+              {cartCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Cart Modal */}
+      {isCartOpen && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-white w-80 max-h-[80vh] overflow-y-auto p-5 rounded-lg shadow-lg relative">
+            <button
+              className="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
+              onClick={() => setIsCartOpen(false)}
+            >
+              ✕
+            </button>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <ShoppingCart className="w-6 h-6" />
+              Your Cart ({cartCount})
+            </h3>
+            {cartCount === 0 ? (
+              <p className="text-gray-600">Your cart is empty</p>
+            ) : (
+              <>
+                <div className="space-y-4">
+                  {JSON.parse(localStorage.getItem('cart') || '[]').map((item, index) => (
+                    <div key={index} className="pb-3 border-b flex justify-between items-center">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">{item.name}</p>
+                          <p className="text-xs text-gray-500">Qty: {item.quantity || 1}</p>
+                        </div>
+                      </div>
+                      <p className="text-sm font-bold">Ksh {(item.price * (item.quantity || 1)).toLocaleString()}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t">
+                  <div className="flex justify-between mb-2 text-sm">
+                    <span className="font-semibold">Subtotal:</span>
+                    <span className="font-bold">Ksh {cartTotal().toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between mb-2 text-sm">
+                    <span className="font-semibold">Shipping:</span>
+                    <span className="font-bold">Ksh 200</span>
+                  </div>
+                  <div className="flex justify-between mb-3 text-base">
+                    <span className="font-semibold">Total:</span>
+                    <span className="font-bold">Ksh {(cartTotal() + 200).toLocaleString()}</span>
+                  </div>
+                  <button
+                    className="mt-4 w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition text-sm"
+                    onClick={() => {
+                      alert('Proceed to checkout');
+                      setIsCartOpen(false);
+                    }}
+                  >
+                    Checkout
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Fixed Advertisement Card */}
       <div className="bg-gradient-to-r from-green-400 to-blue-500 text-black text-center text-2xl font-bold p-6 rounded-xl mb-8 animate-pulse mt-24 mx-4">
         <p className="text-sm sm:text-base md:text-lg lg:text-2xl">Hurry up! Limited time. 💯 Super wool fading free. Get your premium socks collection today!</p>
       </div>
-
-      {/* Payment Popup */}
-      {showPayment && (
-        <PaymentPopup
-          onClose={() => {
-            setShowPayment(false);
-            setSelectedItem(null);
-          }}
-          item={selectedItem}
-        />
-      )}
 
       {/* Page content */}
       {viewMode === 'detail' && selectedItem ? renderDetailView() : renderGridView()}

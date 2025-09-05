@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, ShoppingCart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Import jean images
 import Jean1 from '../../Assets/Jeans/jean1.jpeg';
@@ -20,105 +20,21 @@ import Jean14 from '../../Assets/Jeans/jean14.jpg';
 import Jean15 from '../../Assets/Jeans/jean15.jpg';
 import Jean16 from '../../Assets/Jeans/jean16.jpg';
 
-// PaymentPopup component
-const PaymentPopup = ({ onClose, item }) => {
-  const paybillNumber = '542542';
-  const accountNumber = '378179';
-  const [amount, setAmount] = useState(item?.price || '');
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-
-  const handleDownload = () => {
-    const content = `
-Payment Details
----------------
-Item: ${item?.name}
-Paybill Number: ${paybillNumber}
-Account Number: ${accountNumber}
-Amount: Ksh ${amount || '[Enter amount here]'}
-`;
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'payment_receipt.txt';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    setPaymentSuccess(true);
-    setTimeout(onClose, 1500);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div className="bg-white p-6 sm:p-8 rounded-2xl w-[95%] max-w-md space-y-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2 mb-4">
-          {paymentSuccess ? (
-            <>
-              <CheckCircle className="w-6 h-6 text-green-500" />
-              Payment Verified!
-            </>
-          ) : (
-            'Payment Details'
-          )}
-        </h2>
-
-        {!paymentSuccess ? (
-          <>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center bg-gray-50 p-3 sm:p-4 rounded-lg">
-                <span className="font-medium text-sm sm:text-base">Paybill:</span>
-                <span className="font-mono text-blue-600 font-bold">{paybillNumber}</span>
-              </div>
-              <div className="flex justify-between items-center bg-gray-50 p-3 sm:p-4 rounded-lg">
-                <span className="font-medium text-sm sm:text-base">Account:</span>
-                <span className="font-mono text-blue-600 font-bold">{accountNumber}</span>
-              </div>
-              <div className="bg-green-50 p-3 sm:p-4 rounded-lg">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-sm sm:text-base">Price:</span>
-                  <span className="font-mono text-green-600 font-bold">Ksh {item?.price}</span>
-                </div>
-              </div>
-              <input
-                type="number"
-                placeholder="Enter amount (Ksh)"
-                className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </div>
-
-            <div className="flex gap-3 sm:gap-4 mt-4">
-              <button
-                onClick={handleDownload}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 sm:py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
-              >
-                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-                PAY NOW
-              </button>
-              <button
-                onClick={onClose}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-black py-2 sm:py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
-              >
-                Close
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="text-center text-green-600">
-            <p>Receipt downloaded successfully</p>
-            <p className="text-sm sm:text-base mt-2">Closing automatically...</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 const Jeans = () => {
-  const [showPayment, setShowPayment] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const navigate = useNavigate();
+  const [cartCount, setCartCount] = useState(0);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  useEffect(() => {
+    const updateCart = () => {
+      const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+      setCartCount(storedCart.length);
+    };
+
+    updateCart();
+    window.addEventListener('storage', updateCart);
+    return () => window.removeEventListener('storage', updateCart);
+  }, []);
 
   // List of all jeans with IDs starting from 74
   const jeansProducts = [
@@ -143,7 +59,10 @@ const Jeans = () => {
   const handleAddToCart = (item) => {
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     const newItem = {
-      ...item,
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
       addedAt: new Date().toISOString(),
     };
     localStorage.setItem('cart', JSON.stringify([...storedCart, newItem]));
@@ -152,12 +71,114 @@ const Jeans = () => {
   };
 
   const handlePurchase = (item) => {
-    setSelectedItem(item);
-    setShowPayment(true);
+    // Prepare product data to pass to checkout
+    const productData = {
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      description: item.name // Using name as description since we don't have a separate description field
+    };
+    
+    // Navigate to checkout page with product data
+    navigate('/checkout', { state: { product: productData } });
+  };
+
+  const cartTotal = () => {
+    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    return storedCart.reduce((sum, item) => sum + item.price, 0);
+  };
+
+  const handleProductClick = (item) => {
+    navigate(`/product/${item.id}`);
   };
 
   return (
     <section className="p-10 bg-gray-100 min-h-screen relative">
+      {/* Cart Button */}
+      <div className="fixed top-16 right-5 z-40">
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="relative bg-white p-3 rounded-full shadow-lg hover:shadow-xl transition"
+        >
+          <ShoppingCart className="w-6 h-6 text-gray-700" />
+          {cartCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+              {cartCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Cart Modal */}
+      {isCartOpen && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-white w-80 max-h-[80vh] overflow-y-auto p-5 rounded-lg shadow-lg relative">
+            <button
+              className="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
+              onClick={() => setIsCartOpen(false)}
+            >
+              ✕
+            </button>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <ShoppingCart className="w-6 h-6" />
+              Your Cart ({cartCount})
+            </h3>
+            {cartCount === 0 ? (
+              <p className="text-gray-600">Your cart is empty</p>
+            ) : (
+              <>
+                <div className="space-y-4">
+                  {JSON.parse(localStorage.getItem('cart') || '[]').map((item, index) => (
+                    <div key={index} className="pb-3 border-b flex justify-between items-center">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">{item.name}</p>
+                          <p className="text-xs text-gray-500">
+                            Added: {new Date(item.addedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-sm font-bold">Ksh {item.price.toLocaleString()}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t">
+                  <div className="flex justify-between mb-2 text-sm">
+                    <span className="font-semibold">Subtotal:</span>
+                    <span className="font-bold">Ksh {cartTotal().toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between mb-2 text-sm">
+                    <span className="font-semibold">Shipping:</span>
+                    <span className="font-bold">Ksh 200</span>
+                  </div>
+                  <div className="flex justify-between mb-3 text-base">
+                    <span className="font-semibold">Total:</span>
+                    <span className="font-bold">Ksh {(cartTotal() + 200).toLocaleString()}</span>
+                  </div>
+                  <button
+                    className="mt-4 w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition text-sm"
+                    onClick={() => {
+                      alert('Proceed to checkout');
+                      setIsCartOpen(false);
+                    }}
+                  >
+                    Checkout
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Advertisement Card */}
       <div className="bg-gradient-to-r from-green-400 to-blue-500 text-black p-6 rounded-xl mb-8 animate-pulse mt-24">
         <p className="text-sm sm:text-base md:text-lg lg:text-2xl">Hurry up! Limited time. 💯 Super wool fading free premium Jean collection.</p>
@@ -167,32 +188,31 @@ const Jeans = () => {
         {jeansProducts.map((jean) => (
           <div
             key={jean.id}
-            className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
+            className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
+            onClick={() => handleProductClick(jean)}
           >
-            <Link to={`/product/${jean.id}`}>
-              <div className="h-64 p-4 flex items-center justify-center bg-gray-50">
-                <img
-                  src={jean.image}
-                  alt={jean.name}
-                  className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
-                  loading="lazy"
-                />
-              </div>
-            </Link>
-            <div className="p-6 text-center space-y-2">
+            <div className="h-64 p-4 flex items-center justify-center bg-gray-50">
+              <img
+                src={jean.image}
+                alt={jean.name}
+                className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </div>
+            <div className="p-6 text-center space-y-2" onClick={(e) => e.stopPropagation()}>
               <h3 className="text-xl font-bold mb-1">{jean.name}</h3>
               <p className="text-lg font-bold text-blue-600 mb-2">Ksh {jean.price.toLocaleString()}</p>
               
               <div className="space-y-2 pt-2">
                 <button
-                  onClick={() => handlePurchase(jean)}
+                  onClick={(e) => { e.stopPropagation(); handlePurchase(jean); }}
                   className="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2 sm:py-3 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   <CheckCircle className="w-5 h-5" />
                   Purchase Now
                 </button>
                 <button
-                  onClick={() => handleAddToCart(jean)}
+                  onClick={(e) => { e.stopPropagation(); handleAddToCart(jean); }}
                   className="w-full bg-green-600 hover:bg-green-800 text-white font-semibold py-2 sm:py-3 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   <ShoppingCart className="w-5 h-5" />
@@ -203,16 +223,6 @@ const Jeans = () => {
           </div>
         ))}
       </div>
-
-      {showPayment && selectedItem && (
-        <PaymentPopup
-          onClose={() => {
-            setShowPayment(false);
-            setSelectedItem(null);
-          }}
-          item={selectedItem}
-        />
-      )}
     </section>
   );
 };

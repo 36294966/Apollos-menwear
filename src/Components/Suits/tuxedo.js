@@ -65,7 +65,7 @@ const PaymentPopup = ({ item, selectedSize, onClose }) => {
               <div className="bg-green-50 p-3 rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-sm">Standard Price:</span>
-                  <span className="font-mono text-green-600 font-bold">Ksh ${paymentDetails.standardPrice.toLocaleString()}</span>
+                  <span className="font-mono text-green-600 font-bold">Ksh {paymentDetails.standardPrice.toLocaleString()}</span>
                 </div>
               </div>
               <input
@@ -136,17 +136,28 @@ const Tuxedo = () => {
   const [deselectionTimers, setDeselectionTimers] = useState({});
 
   const tuxedoSuits = [
-    { id: 46, name: ' Velvet Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo1, price: 15000 },
-    { id: 47, name: 'Midnight Tuxedo  Suit ⭐⭐⭐⭐⭐', image: Tuxedo2, price: 15000 },
-    { id: 48, name: 'Ensemble Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo3, price: 15000 },
-    { id: 49, name: 'Classic Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo5, price: 15000 },
-    { id: 50, name: 'Slim Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo6, price: 15000 },
-    { id: 51, name: 'Designer Tuxedo Set ⭐⭐⭐⭐⭐', image: Tuxedo7, price: 15000 },
-    { id: 52, name: 'Royal Dinner Suit ⭐⭐⭐⭐⭐', image: Tuxedo8, price: 15000 },
-    { id: 53, name: 'Premium Tuxedo Suit ⭐⭐⭐⭐⭐', image: Tuxedo9, price: 15000 },
+    { id: 46, name: 'Velvet Tuxedo Suit', image: Tuxedo1, price: 15000, rating: 5, description: 'Luxurious velvet tuxedo for formal occasions' },
+    { id: 47, name: 'Midnight Tuxedo Suit', image: Tuxedo2, price: 15000, rating: 5, description: 'Elegant black tuxedo perfect for evening events' },
+    { id: 48, name: 'Ensemble Tuxedo Suit', image: Tuxedo3, price: 15000, rating: 5, description: 'Complete tuxedo set with premium finishing' },
+    { id: 49, name: 'Classic Tuxedo Suit', image: Tuxedo5, price: 15000, rating: 5, description: 'Timeless classic tuxedo for any formal event' },
+    { id: 50, name: 'Slim Tuxedo Suit', image: Tuxedo6, price: 15000, rating: 5, description: 'Slim-fit tuxedo for a modern silhouette' },
+    { id: 51, name: 'Designer Tuxedo Set', image: Tuxedo7, price: 15000, rating: 5, description: 'Designer tuxedo with exquisite details' },
+    { id: 52, name: 'Royal Dinner Suit', image: Tuxedo8, price: 15000, rating: 5, description: 'Regal dinner suit for special occasions' },
+    { id: 53, name: 'Premium Tuxedo Suit', image: Tuxedo9, price: 15000, rating: 5, description: 'Premium quality tuxedo with superior craftsmanship' },
   ];
 
   const sizes = ['44', '46', '48', '50', '52', '54', '56', '58', '60'];
+
+  // Function to calculate cart total
+  const cartTotal = () => {
+    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    return storedCart.reduce((sum, item) => sum + item.price, 0);
+  };
+
+  // Function to render star ratings
+  const renderStars = (rating) => {
+    return '⭐'.repeat(rating);
+  };
 
   useEffect(() => {
     const updateCart = () => {
@@ -261,43 +272,52 @@ const Tuxedo = () => {
   const handlePurchase = (item) => {
     if (!validateSizeSelection(item.id)) return;
     
-    setSelectedTuxedo(item);
-    setShowPayment(true);
+    // Prepare product data to pass to checkout
+    const productData = {
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      description: item.description,
+      size: selectedSizeForTuxedo[item.id]
+    };
+    
+    // Navigate to checkout page with product data
+    navigate('/checkout', { state: { product: productData } });
   };
 
   const handleProductClick = (item) => {
     navigate(`/product/${item.id}`);
   };
 
-  const cartTotal = () => {
-    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    return storedCart.reduce((sum, item) => sum + item.price, 0);
-  };
-
   const handlePrevClick = (id) => {
     const sizeSelector = document.getElementById(`size-selector-${id}`);
-    sizeSelector.scrollBy({ left: -100, behavior: 'smooth' });
+    if (sizeSelector) {
+      sizeSelector.scrollBy({ left: -100, behavior: 'smooth' });
+    }
   };
 
   const handleNextClick = (id) => {
     const sizeSelector = document.getElementById(`size-selector-${id}`);
-    sizeSelector.scrollBy({ left: 100, behavior: 'smooth' });
+    if (sizeSelector) {
+      sizeSelector.scrollBy({ left: 100, behavior: 'smooth' });
+    }
   };
 
   return (
-    <section className="p-4 sm:p-6 bg-gray-50 min-h-screen">
+    <section className="p-5 sm:p-7 bg-gray-50 min-h-screen">
       {/* Size Validation Popup */}
       {showSizeValidation && (
         <SizeValidationPopup onClose={() => setShowSizeValidation(false)} />
       )}
 
       {/* Blinking Banner */}
-      <div className="bg-gradient-to-r from-green-400 to-blue-500 text-white text-center text-xl sm:text-2xl font-bold p-6 rounded-xl mb-8 animate-pulse mt-24 mx-4">
+      <div className="bg-gradient-to-r from-green-400 to-blue-500 text-white text-center text-base font-bold p-5 rounded-xl mb-7 animate-pulse mt-24 mx-3">
         <p>Hurry up! Limited time offer! Get your premium tuxedo dinner suits today 💯 super wool fading free!</p>
       </div>
 
       {/* Cart Button */}
-      <div className="fixed top-16 right-4 z-40">
+      <div className="fixed top-16 right-5 z-40">
         <button 
           onClick={() => setIsCartOpen(true)}
           className="relative bg-white p-3 rounded-full shadow-lg hover:shadow-xl transition"
@@ -314,14 +334,14 @@ const Tuxedo = () => {
       {/* Cart Modal */}
       {isCartOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-white w-80 max-h-[80vh] overflow-y-auto p-4 rounded-lg shadow-lg relative">
+          <div className="bg-white w-80 max-h-[80vh] overflow-y-auto p-5 rounded-lg shadow-lg relative">
             <button
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+              className="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
               onClick={() => setIsCartOpen(false)}
             >
               ✕
             </button>
-            <h3 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <ShoppingCart className="w-6 h-6" />
               Your Cart ({cartCount})
             </h3>
@@ -331,7 +351,7 @@ const Tuxedo = () => {
               <>
                 <div className="space-y-4">
                   {JSON.parse(localStorage.getItem('cart') || '[]').map((item, index) => (
-                    <div key={index} className="pb-2 border-b flex justify-between items-center">
+                    <div key={index} className="pb-3 border-b flex justify-between items-center">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center">
                           <img
@@ -342,20 +362,28 @@ const Tuxedo = () => {
                         </div>
                         <div>
                           <p className="font-semibold text-sm">{item.name}</p>
-                          <p className="text-xs text-gray-500">Size: ${item.size}</p>
+                          <p className="text-xs text-gray-500">Size: {item.size}</p>
                         </div>
                       </div>
-                      <p className="text-sm font-bold">Ksh ${item.price}</p>
+                      <p className="text-sm font-bold">Ksh {item.price.toLocaleString()}</p>
                     </div>
                   ))}
                 </div>
                 <div className="mt-4 pt-4 border-t">
-                  <div className="flex justify-between mb-2">
+                  <div className="flex justify-between mb-2 text-sm">
+                    <span className="font-semibold">Subtotal:</span>
+                    <span className="font-bold">Ksh {cartTotal().toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between mb-2 text-sm">
+                    <span className="font-semibold">Shipping:</span>
+                    <span className="font-bold">Ksh 200</span>
+                  </div>
+                  <div className="flex justify-between mb-3 text-base">
                     <span className="font-semibold">Total:</span>
-                    <span className="font-bold">Ksh ${(cartTotal() + 200).toLocaleString()}</span>
+                    <span className="font-bold">Ksh {(cartTotal() + 200).toLocaleString()}</span>
                   </div>
                   <button
-                    className="mt-4 w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition"
+                    className="mt-4 w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition text-sm"
                     onClick={() => {
                       alert('Proceed to checkout');
                       setIsCartOpen(false);
@@ -371,54 +399,56 @@ const Tuxedo = () => {
       )}
 
       {/* Tuxedo Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-12">
         {tuxedoSuits.map((suit) => (
           <div
             key={suit.id}
             className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
           >
             <div 
-              className="h-64 w-full bg-gray-100 p-4 flex items-center justify-center cursor-pointer"
+              className="aspect-square bg-gray-100 p-4 flex items-center justify-center cursor-pointer"
               onClick={() => handleProductClick(suit)}
             >
               <img
                 src={suit.image}
                 alt={suit.name}
-                className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-contain"
                 loading="lazy"
               />
             </div>
-            <div className="p-4 sm:p-5 text-center space-y-3">
+            <div className="p-4 text-center" onClick={(e) => e.stopPropagation()}>
               <h3 
-                className="text-lg sm:text-xl font-bold text-gray-900 cursor-pointer hover:text-blue-600"
+                className="text-base font-bold text-gray-900 line-clamp-2 h-12 overflow-hidden mb-1 cursor-pointer hover:text-blue-600"
                 onClick={() => handleProductClick(suit)}
               >
                 {suit.name}
               </h3>
-              <p className="text-md sm:text-lg font-semibold text-blue-600">Ksh {suit.price.toLocaleString()}</p>
+              <div className="text-sm text-yellow-500 mb-1">{renderStars(suit.rating)}</div>
+              <p className="text-base text-blue-600 font-bold mb-3">Ksh {suit.price.toLocaleString()}</p>
+              
               {/* Size Selection */}
-              <div className="text-sm sm:text-md font-semibold mb-2">Select Size:</div>
+              <div className="text-sm font-semibold mb-1">Select Size:</div>
               <div className="flex justify-center items-center mb-2">
                 <button
-                  onClick={() => handlePrevClick(suit.id)}
-                  className="text-lg sm:text-xl text-gray-600 hover:text-gray-800"
+                  onClick={(e) => { e.stopPropagation(); handlePrevClick(suit.id); }}
+                  className="text-base text-gray-600 hover:text-gray-800 p-1"
                 >
-                  <ChevronLeft />
+                  <ChevronLeft size={18} />
                 </button>
                 <div
                   id={`size-selector-${suit.id}`}
-                  className="size-selector flex gap-2 overflow-x-auto py-2"
+                  className="size-selector flex gap-1.5 overflow-x-auto py-2 max-w-[220px] scrollbar-hide"
                 >
                   {sizes.map((size) => (
                     <button
                       key={size}
-                      onClick={() => handleSizeSelection(suit.id, size)}
-                      className={`px-4 py-2 rounded-lg border-2 transition-all duration-300 ${
+                      onClick={(e) => { e.stopPropagation(); handleSizeSelection(suit.id, size); }}
+                      className={`px-3 py-2 rounded-lg border-2 min-w-[36px] text-sm transition-all ${
                         selectedSizeForTuxedo[suit.id] === size 
-                          ? 'bg-blue-600 text-white' 
+                          ? 'bg-blue-600 text-white border-blue-600' 
                           : highlightedSizes[suit.id] 
-                            ? 'bg-red-500 text-white animate-pulse' 
-                            : 'bg-white text-gray-600'
+                            ? 'border-red-500 bg-red-50 animate-pulse' 
+                            : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
                       }`}
                     >
                       {size}
@@ -426,25 +456,27 @@ const Tuxedo = () => {
                   ))}
                 </div>
                 <button
-                  onClick={() => handleNextClick(suit.id)}
-                  className="text-lg sm:text-xl text-gray-600 hover:text-gray-800"
+                  onClick={(e) => { e.stopPropagation(); handleNextClick(suit.id); }}
+                  className="text-base text-gray-600 hover:text-gray-800 p-1"
                 >
-                  <ChevronRight />
+                  <ChevronRight size={18} />
                 </button>
               </div>
-              <div className="space-y-2">
+              
+              {/* Buttons */}
+              <div className="space-y-2 mt-3">
                 <button
-                  onClick={() => handlePurchase(suit)}
-                  className="w-full bg-blue-600 hover:bg-blue-800 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  onClick={(e) => { e.stopPropagation(); handlePurchase(suit); }}
+                  className="w-full bg-gray-800 hover:bg-gray-900 text-white py-2.5 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-1.5"
                 >
-                  <CheckCircle className="w-5 h-5" />
+                  <CheckCircle size={16} />
                   Purchase Now
                 </button>
                 <button
-                  onClick={() => handleAddToCart(suit)}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  onClick={(e) => { e.stopPropagation(); handleAddToCart(suit); }}
+                  className="w-full bg-green-600 hover:bg-green-800 text-white py-2.5 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-1.5"
                 >
-                  <ShoppingCart className="w-5 h-5" />
+                  <ShoppingCart size={16} />
                   Add to Cart
                 </button>
               </div>

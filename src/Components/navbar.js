@@ -24,6 +24,13 @@ const Navbar = ({ onFilterSelect }) => {
     return () => window.removeEventListener('storage', updateCartCount);
   }, []);
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const handleFilter = (category, value) => {
     // Handle category filtering and navigation
     onFilterSelect?.(category, value);
@@ -55,7 +62,18 @@ const Navbar = ({ onFilterSelect }) => {
     };
 
     const path = routeMap[category]?.[value];
-    if (path) navigate(path);
+    if (path) {
+      navigate(path);
+      // Scroll to top after navigation
+      setTimeout(scrollToTop, 100);
+    }
+  };
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    setIsOpen(false);
+    // Scroll to top after navigation
+    setTimeout(scrollToTop, 100);
   };
 
   const menuItems = [
@@ -97,7 +115,10 @@ const Navbar = ({ onFilterSelect }) => {
           src={Logo}
           alt="Logo"
           className="h-16 w-16 md:h-24 md:w-24 rounded-full object-cover shadow-lg cursor-pointer transition-transform hover:scale-105"
-          onClick={() => navigate('/')}
+          onClick={() => {
+            navigate('/');
+            scrollToTop();
+          }}
         />
 
         {/* Desktop Menu */}
@@ -105,7 +126,8 @@ const Navbar = ({ onFilterSelect }) => {
           <button
             onClick={() => {
               navigate('/');
-              setIsOpen(false); // Close menu on Home click
+              setIsOpen(false);
+              scrollToTop();
             }}
             className="flex items-center group hover:text-yellow-200 transition"
           >
@@ -129,8 +151,7 @@ const Navbar = ({ onFilterSelect }) => {
                 className="flex items-center space-x-2 group hover:text-yellow-200 transition px-3 py-2 rounded-lg hover:bg-blue-700"
                 onClick={() => {
                   if (item.page) {
-                    navigate(item.page);
-                    setIsOpen(false); // Close the menu on item click
+                    handleNavigation(item.page);
                   } else {
                     setOpenDropdown(openDropdown === item.title ? null : item.title);
                   }
@@ -185,7 +206,8 @@ const Navbar = ({ onFilterSelect }) => {
             className="flex items-center space-x-1 hover:text-yellow-200 cursor-pointer relative group px-3 py-2 rounded-lg hover:bg-blue-700"
             onClick={() => {
               navigate('/cart');
-              setIsOpen(false); // Close menu when clicking cart
+              setIsOpen(false);
+              scrollToTop();
             }}
           >
             <div className="transition-transform group-hover:scale-110">
@@ -206,7 +228,8 @@ const Navbar = ({ onFilterSelect }) => {
             className="relative cursor-pointer hover:text-yellow-200 p-2 rounded-lg hover:bg-blue-700"
             onClick={() => {
               navigate('/cart');
-              setIsOpen(false); // Close menu when clicking cart
+              setIsOpen(false);
+              scrollToTop();
             }}
           >
             <ShoppingCart size={24} />
@@ -232,7 +255,8 @@ const Navbar = ({ onFilterSelect }) => {
           <button
             onClick={() => {
               navigate('/');
-              setIsOpen(false); // Close menu on Home click
+              setIsOpen(false);
+              scrollToTop();
             }}
             className="flex items-center space-x-2 py-2 w-full hover:bg-blue-700 rounded-lg px-2 transition-colors"
           >
@@ -246,8 +270,7 @@ const Navbar = ({ onFilterSelect }) => {
                 className="flex justify-between items-center w-full py-2 px-2 hover:bg-blue-700 rounded-lg transition-colors"
                 onClick={() => {
                   if (item.page) {
-                    navigate(item.page);
-                    setIsOpen(false); // Close the menu after navigation
+                    handleNavigation(item.page);
                   } else {
                     setOpenDropdown(openDropdown === item.title ? null : item.title);
                   }
@@ -278,7 +301,6 @@ const Navbar = ({ onFilterSelect }) => {
                             key={val}
                             onClick={() => {
                               handleFilter(item.title, val);
-                              setIsOpen(false); // Close menu after selecting a filter
                             }}
                             className="w-full text-left px-3 py-2 hover:bg-blue-700 rounded-lg flex items-center transition-colors group/item"
                           >

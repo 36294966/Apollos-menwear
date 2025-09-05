@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, XCircle, ShoppingCart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { CheckCircle, ShoppingCart } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import Official1 from '../../Assets/Official/official1.jpg';
 import Official2 from '../../Assets/Official/official2.jpg';
 import Official3 from '../../Assets/Official/official3.jpg';
@@ -18,107 +18,9 @@ import Official14 from '../../Assets/Official/official14.jpg';
 import Official15 from '../../Assets/Official/official15.jpg';
 import Official16 from '../../Assets/Official/official16.jpg';
 
-// Payment Popup Component
-const PaymentPopup = ({ item, onClose }) => {
-  const [amount, setAmount] = useState('');
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const paymentDetails = {
-    paybill: '542542',
-    account: '378179',
-  };
-
-  const generatePaymentFile = () => {
-    const content = `OFFICIAL SHIRT PURCHASE\n---------------------\nItem: ${item?.name}\nProduct ID: ${item?.id}\nPaybill: ${paymentDetails.paybill}\nAccount: ${paymentDetails.account}\nAmount Paid: Ksh ${amount || '________'}\nStandard Price: Ksh ${item?.price}`;
-
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `shirt_payment_${item?.id}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    setPaymentSuccess(true);
-    setTimeout(onClose, 1500);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div className="bg-white p-6 rounded-lg w-[95%] max-w-md space-y-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2">
-          {paymentSuccess ? (
-            <>
-              <CheckCircle className="w-8 h-8 text-green-500" />
-              Payment Verified!
-            </>
-          ) : (
-            `${item?.name} Purchase`
-          )}
-        </h2>
-
-        {!paymentSuccess ? (
-          <>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-                <span className="font-medium text-sm sm:text-base">Paybill:</span>
-                <span className="font-mono text-blue-600 font-bold">{paymentDetails.paybill}</span>
-              </div>
-
-              <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-                <span className="font-medium text-sm sm:text-base">Account:</span>
-                <span className="font-mono text-blue-600 font-bold">{paymentDetails.account}</span>
-              </div>
-
-              <div className="bg-green-50 p-3 rounded-lg">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-sm sm:text-base">Standard Price:</span>
-                  <span className="font-mono text-green-600 font-bold">Ksh {item?.price?.toLocaleString()}</span>
-                </div>
-              </div>
-
-              <input
-                type="number"
-                placeholder="Enter amount (Ksh)"
-                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                min="1800"
-              />
-            </div>
-
-            <div className="flex gap-3 mt-4">
-              <button
-                onClick={generatePaymentFile}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
-              >
-                <CheckCircle className="w-5 h-5" />
-                Confirm Payment
-              </button>
-              <button
-                onClick={onClose}
-                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
-              >
-                <XCircle className="w-5 h-5" />
-                Cancel
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="text-center text-green-600">
-            <p>Transaction receipt downloaded successfully</p>
-            <p className="text-sm text-gray-500 mt-2">Closing automatically...</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 // Main Official Component
 const Official = () => {
-  const [showPayment, setShowPayment] = useState(false);
-  const [selectedShirt, setSelectedShirt] = useState(null);
+  const navigate = useNavigate();
   const [cartCount, setCartCount] = useState(0);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -156,7 +58,10 @@ const Official = () => {
   const handleAddToCart = (item) => {
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     const newItem = {
-      ...item,
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
       addedAt: new Date().toISOString()
     };
     const updatedCart = [...storedCart, newItem];
@@ -165,9 +70,27 @@ const Official = () => {
     alert(`${item.name} added to cart`);
   };
 
+  const handlePurchase = (item) => {
+    // Prepare product data to pass to checkout
+    const productData = {
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      description: item.name // Using name as description since we don't have a separate description field
+    };
+    
+    // Navigate to checkout page with product data
+    navigate('/checkout', { state: { product: productData } });
+  };
+
   const cartTotal = () => {
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     return storedCart.reduce((sum, item) => sum + item.price, 0);
+  };
+
+  const handleProductClick = (item) => {
+    navigate(`/product/${item.id}`);
   };
 
   return (
@@ -228,12 +151,20 @@ const Official = () => {
                   ))}
                 </div>
                 <div className="mt-4 pt-4 border-t">
-                  <div className="flex justify-between mb-2">
+                  <div className="flex justify-between mb-2 text-sm">
+                    <span className="font-semibold">Subtotal:</span>
+                    <span className="font-bold">Ksh {cartTotal().toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between mb-2 text-sm">
+                    <span className="font-semibold">Shipping:</span>
+                    <span className="font-bold">Ksh 200</span>
+                  </div>
+                  <div className="flex justify-between mb-3 text-base">
                     <span className="font-semibold">Total:</span>
                     <span className="font-bold">Ksh {(cartTotal() + 200).toLocaleString()}</span>
                   </div>
                   <button
-                    className="mt-4 w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition"
+                    className="mt-4 w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition text-sm"
                     onClick={() => {
                       alert('Proceed to checkout');
                       setIsCartOpen(false);
@@ -260,25 +191,28 @@ const Official = () => {
             key={shirt.id}
             className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
           >
-            <Link to={`/product/${shirt.id}`} onClick={() => window.scrollTo(0, 0)}>
-              <div className="aspect-square bg-gray-100 p-5 flex items-center justify-center">
-                <img
-                  src={shirt.image}
-                  alt={shirt.name}
-                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                  loading="lazy"
-                />
-              </div>
-            </Link>
+            <div 
+              className="aspect-square bg-gray-100 p-5 flex items-center justify-center cursor-pointer"
+              onClick={() => handleProductClick(shirt)}
+            >
+              <img
+                src={shirt.image}
+                alt={shirt.name}
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </div>
             <div className="p-5 text-center space-y-4">
-              <h3 className="text-xl sm:text-lg font-bold text-gray-900">{shirt.name}</h3>
+              <h3 
+                className="text-xl sm:text-lg font-bold text-gray-900 cursor-pointer hover:text-blue-600"
+                onClick={() => handleProductClick(shirt)}
+              >
+                {shirt.name}
+              </h3>
               <p className="text-blue-600 font-bold text-xl">Ksh {shirt.price.toLocaleString()}</p>
               <div className="space-y-2">
                 <button
-                  onClick={() => {
-                    setSelectedShirt(shirt);
-                    setShowPayment(true);
-                  }}
+                  onClick={() => handlePurchase(shirt)}
                   className="w-full bg-gray-800 hover:bg-gray-900 text-white py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-5 h-5" />
@@ -296,16 +230,6 @@ const Official = () => {
           </article>
         ))}
       </div>
-
-      {showPayment && (
-        <PaymentPopup 
-          item={selectedShirt}
-          onClose={() => {
-            setShowPayment(false);
-            setSelectedShirt(null);
-          }}
-        />
-      )}
     </section>
   );
 };
