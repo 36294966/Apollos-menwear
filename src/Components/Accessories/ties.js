@@ -154,17 +154,26 @@ const Ties = () => {
       e.stopPropagation();
     }
     
-    // Prepare product data to pass to checkout
-    const productData = {
+    // Save the direct purchase to localStorage
+    const purchaseData = {
       id: item.id,
       name: item.name,
       price: item.price,
       image: item.image,
-      description: item.description
+      description: item.description,
+      category: item.category,
+      quantity: 1
     };
     
-    // Navigate to checkout page with product data
-    navigate('/checkout', { state: { product: productData } });
+    localStorage.setItem('directPurchase', JSON.stringify(purchaseData));
+    
+    // Navigate to checkout page with proper state
+    navigate('/checkout', { 
+      state: { 
+        purchaseItem: purchaseData,
+        isDirectPurchase: true 
+      } 
+    });
   };
 
   const handleAddToCart = (item, e = null) => {

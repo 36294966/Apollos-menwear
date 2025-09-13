@@ -202,7 +202,7 @@ const ThreePieceSuits = () => {
       price: item.price,
       image: item.image,
       size: selectedSizeForSuit[item.id] || 'Not Selected',
-      addedAt: new Date().toISOString(),
+      addedAt: new Date().toLocaleString(),
     };
     const updatedCart = [...storedCart, newItem];
     localStorage.setItem('cart', JSON.stringify(updatedCart));
@@ -231,7 +231,12 @@ const ThreePieceSuits = () => {
     };
     
     // Navigate to checkout page with product data
-    navigate('/checkout', { state: { product: productData } });
+    navigate('/checkout', { 
+      state: { 
+        purchaseItem: productData,
+        isDirectPurchase: true 
+      } 
+    });
   };
 
   const handleProductClick = (item) => {
@@ -250,6 +255,22 @@ const ThreePieceSuits = () => {
     if (sizeSelector) {
       sizeSelector.scrollBy({ left: 100, behavior: 'smooth' });
     }
+  };
+
+  const handleCheckout = () => {
+    const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (cartItems.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+    
+    // Navigate to checkout page with cart items
+    navigate('/checkout', { 
+      state: { 
+        cartItems: cartItems,
+        isDirectPurchase: false 
+      } 
+    });
   };
 
   return (
@@ -336,7 +357,7 @@ const ThreePieceSuits = () => {
                   <button
                     className="mt-4 w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition text-sm"
                     onClick={() => {
-                      alert('Proceed to checkout');
+                      handleCheckout();
                       setIsCartOpen(false);
                     }}
                   >

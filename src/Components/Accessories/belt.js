@@ -18,7 +18,7 @@ const Belt = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
-    const updateCart = () => {
+    const updateCart = () =>{
       const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
       setCartCount(storedCart.length);
     };
@@ -102,7 +102,7 @@ const Belt = () => {
       name: item.name,
       price: item.price,
       image: item.image,
-      addedAt: new Date().toISOString(),
+      addedAt: new Date().toLocaleString(),
     };
     const updatedCart = [...storedCart, newItem];
     localStorage.setItem('cart', JSON.stringify(updatedCart));
@@ -121,7 +121,12 @@ const Belt = () => {
     };
     
     // Navigate to checkout page with product data
-    navigate('/checkout', { state: { product: productData } });
+    navigate('/checkout', { 
+      state: { 
+        purchaseItem: productData,
+        isDirectPurchase: true 
+      } 
+    });
   };
 
   const cartTotal = () => {
@@ -131,6 +136,22 @@ const Belt = () => {
 
   const handleProductClick = (item) => {
     navigate(`/product/${item.id}`);
+  };
+
+  const handleCheckout = () => {
+    const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (cartItems.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+    
+    // Navigate to checkout page with cart items
+    navigate('/checkout', { 
+      state: { 
+        cartItems: cartItems,
+        isDirectPurchase: false 
+      } 
+    });
   };
 
   return (
@@ -206,7 +227,7 @@ const Belt = () => {
                   <button
                     className="mt-4 w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition text-sm"
                     onClick={() => {
-                      alert('Proceed to checkout');
+                      handleCheckout();
                       setIsCartOpen(false);
                     }}
                   >

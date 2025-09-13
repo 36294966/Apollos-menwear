@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import { CheckCircle, ShoppingCart } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cassual1 from '../../Assets/Cassual/cassual1.jpg';
 import Cassual2 from '../../Assets/Cassual/cassual2.jpg';
@@ -54,7 +54,7 @@ const Cassual = () => {
       name: shirt.name,
       price: shirt.price,
       image: shirt.image,
-      addedAt: new Date().toISOString()
+      addedAt: new Date().toLocaleString()
     };
     const updatedCart = [...storedCart, newItem];
     localStorage.setItem('cart', JSON.stringify(updatedCart));
@@ -73,16 +73,37 @@ const Cassual = () => {
     };
     
     // Navigate to checkout page with product data
-    navigate('/checkout', { state: { product: productData } });
+    navigate('/checkout', { 
+      state: { 
+        purchaseItem: productData,
+        isDirectPurchase: true 
+      } 
+    });
   };
 
   const cartTotal = () => {
-    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
     return storedCart.reduce((sum, item) => sum + item.price, 0);
   };
 
   const handleProductClick = (shirt) => {
     navigate(`/product/${shirt.id}`);
+  };
+
+  const handleCheckout = () => {
+    const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (cartItems.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+    
+    // Navigate to checkout page with cart items
+    navigate('/checkout', { 
+      state: { 
+        cartItems: cartItems,
+        isDirectPurchase: false 
+      } 
+    });
   };
 
   return (
@@ -153,7 +174,7 @@ const Cassual = () => {
                     <span className="font-bold">Ksh {cartTotal().toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between mb-2 text-sm">
-                    <span className="font-semibold">Shipping:</span>
+                    <span className ='font-semibold'>Shipping:</span>
                     <span className="font-bold">Ksh 200</span>
                   </div>
                   <div className="flex justify-between mb-3 text-base">
@@ -163,7 +184,7 @@ const Cassual = () => {
                   <button
                     className="mt-4 w-full bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition text-sm"
                     onClick={() => {
-                      alert('Proceed to checkout');
+                      handleCheckout();
                       setIsCartOpen(false);
                     }}
                   >

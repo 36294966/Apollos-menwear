@@ -38,55 +38,206 @@ const Jeans = () => {
 
   // List of all jeans with IDs starting from 74
   const jeansProducts = [
-    { id: 74, image: Jean1, name: 'Slim Fit Jean', price: 2000 },
-    { id: 75, image: Jean2, name: 'Vintage Jean', price: 2000 },
-    { id: 76, image: Jean3, name: 'Ripped Skinny Jean', price: 2000 },
-    { id: 77, image: Jean4, name: 'Classic Straight Jean', price: 2000 },
-    { id: 78, image: Jean5, name: 'High Super Jean', price: 2000 },
-    { id: 79, image: Jean6, name: 'Black Stretch Jean', price: 2000 },
-    { id: 80, image: Jean7, name: 'Classic Jean', price: 2000 },
-    { id: 81, image: Jean8, name: 'Tapered Cargo Jean', price: 2000 },
-    { id: 82, image: Jean9, name: 'Flare Jean', price: 2000 },
-    { id: 83, image: Jean10, name: 'Selvedge Denim Jean', price: 2000 },
-    { id: 84, image: Jean11, name: 'Super Jean', price: 2000 },
-    { id: 85, image: Jean12, name: 'Stretch Skinny Fit Jean', price: 2000 },
-    { id: 86, image: Jean13, name: 'Mid Wash Jean', price: 2000 },
-    { id: 87, image: Jean14, name: 'Slim Fit Jean', price: 2000 },
-    { id: 88, image: Jean15, name: 'Premium Jean', price: 2000 },
-    { id: 89, image: Jean16, name: 'Dark Blue Jean', price: 2000 }
+    { 
+      id: 74, 
+      image: Jean1, 
+      name: 'Slim Fit Jean', 
+      price: 2000, 
+      description: '🌟 Premium slim fit jeans for a modern look',
+      category: 'Jeans' 
+    },
+    { 
+      id: 75, 
+      image: Jean2, 
+      name: 'Vintage Jean', 
+      price: 2000, 
+      description: '🌟 Classic vintage style jeans with retro appeal',
+      category: 'Jeans' 
+    },
+    { 
+      id: 76, 
+      image: Jean3, 
+      name: 'Ripped Skinny Jean', 
+      price: 2000, 
+      description: '🌟 Trendy ripped skinny jeans for a bold statement',
+      category: 'Jeans' 
+    },
+    { 
+      id: 77, 
+      image: Jean4, 
+      name: 'Classic Straight Jean', 
+      price: 2000, 
+      description: '🌟 Timeless straight leg jeans for everyday wear',
+      category: 'Jeans' 
+    },
+    { 
+      id: 78, 
+      image: Jean5, 
+      name: 'High Super Jean', 
+      price: 2000, 
+      description: '🌟 High-waisted super comfortable jeans',
+      category: 'Jeans' 
+    },
+    { 
+      id: 79, 
+      image: Jean6, 
+      name: 'Black Stretch Jean', 
+      price: 2000, 
+      description: '🌟 Stretchy black jeans for maximum comfort',
+      category: 'Jeans' 
+    },
+    { 
+      id: 80, 
+      image: Jean7, 
+      name: 'Classic Jean', 
+      price: 2000, 
+      description: '🌟 Classic blue jeans that never go out of style',
+      category: 'Jeans' 
+    },
+    { 
+      id: 81, 
+      image: Jean8, 
+      name: 'Tapered Cargo Jean', 
+      price: 2000, 
+      description: '🌟 Practical cargo jeans with tapered fit',
+      category: 'Jeans' 
+    },
+    { 
+      id: 82, 
+      image: Jean9, 
+      name: 'Flare Jean', 
+      price: 2000, 
+      description: '🌟 Stylish flare jeans for a retro vibe',
+      category: 'Jeans' 
+    },
+    { 
+      id: 83, 
+      image: Jean10, 
+      name: 'Selvedge Denim Jean', 
+      price: 2000, 
+      description: '🌟 Premium selvedge denim for denim enthusiasts',
+      category: 'Jeans' 
+    },
+    { 
+      id: 84, 
+      image: Jean11, 
+      name: 'Super Jean', 
+      price: 2000, 
+      description: '🌟 Super comfortable jeans for all-day wear',
+      category: 'Jeans' 
+    },
+    { 
+      id: 85, 
+      image: Jean12, 
+      name: 'Stretch Skinny Fit Jean', 
+      price: 2000, 
+      description: '🌟 Skinny fit jeans with stretch for comfort',
+      category: 'Jeans' 
+    },
+    { 
+      id: 86, 
+      image: Jean13, 
+      name: 'Mid Wash Jean', 
+      price: 2000, 
+      description: '🌟 Medium wash jeans for a casual look',
+      category: 'Jeans' 
+    },
+    { 
+      id: 87, 
+      image: Jean14, 
+      name: 'Slim Fit Jean', 
+      price: 2000, 
+      description: '🌟 Slim fit design for a modern silhouette',
+      category: 'Jeans' 
+    },
+    { 
+      id: 88, 
+      image: Jean15, 
+      name: 'Premium Jean', 
+      price: 2000, 
+      description: '🌟 High-quality premium jeans for discerning taste',
+      category: 'Jeans' 
+    },
+    { 
+      id: 89, 
+      image: Jean16, 
+      name: 'Dark Blue Jean', 
+      price: 2000, 
+      description: '🌟 Dark blue jeans for a sophisticated look',
+      category: 'Jeans' 
+    }
   ];
 
-  const handleAddToCart = (item) => {
+  const handleAddToCart = (item, e = null) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    const newItem = {
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      image: item.image,
-      addedAt: new Date().toISOString(),
-    };
-    localStorage.setItem('cart', JSON.stringify([...storedCart, newItem]));
+    const existingItemIndex = storedCart.findIndex(cartItem => cartItem.id === item.id);
+    
+    let newCart;
+    if (existingItemIndex >= 0) {
+      // Item already in cart, update quantity
+      newCart = [...storedCart];
+      newCart[existingItemIndex].quantity = (newCart[existingItemIndex].quantity || 1) + 1;
+    } else {
+      // Item not in cart, add new item
+      const newItem = {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        quantity: 1,
+        addedAt: new Date().toISOString(),
+      };
+      newCart = [...storedCart, newItem];
+    }
+    
+    localStorage.setItem('cart', JSON.stringify(newCart));
     window.dispatchEvent(new Event('storage'));
-    alert(`${item.name} added to cart`);
+    
+    alert(`${item.name} ${existingItemIndex >= 0 ? 'quantity updated in' : 'added to'} cart`);
   };
 
-  const handlePurchase = (item) => {
-    // Prepare product data to pass to checkout
-    const productData = {
+  const handlePurchase = (item, e = null) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    // Save the direct purchase to localStorage
+    const purchaseData = {
       id: item.id,
       name: item.name,
       price: item.price,
       image: item.image,
-      description: item.name // Using name as description since we don't have a separate description field
+      description: item.description,
+      category: item.category,
+      quantity: 1
     };
     
-    // Navigate to checkout page with product data
-    navigate('/checkout', { state: { product: productData } });
+    localStorage.setItem('directPurchase', JSON.stringify(purchaseData));
+    
+    // Navigate to checkout page with proper state
+    navigate('/checkout', { 
+      state: { 
+        purchaseItem: purchaseData,
+        isDirectPurchase: true 
+      } 
+    });
   };
 
   const cartTotal = () => {
     const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    return storedCart.reduce((sum, item) => sum + item.price, 0);
+    return storedCart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+  };
+
+  // Check if item is in cart
+  const isItemInCart = (itemId) => {
+    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    return storedCart.some(item => item.id === itemId);
   };
 
   const handleProductClick = (item) => {
@@ -141,12 +292,10 @@ const Jeans = () => {
                         </div>
                         <div>
                           <p className="font-semibold text-sm">{item.name}</p>
-                          <p className="text-xs text-gray-500">
-                            Added: {new Date(item.addedAt).toLocaleDateString()}
-                          </p>
+                          <p className="text-xs text-gray-500">Qty: {item.quantity || 1}</p>
                         </div>
                       </div>
-                      <p className="text-sm font-bold">Ksh {item.price.toLocaleString()}</p>
+                      <p className="text-sm font-bold">Ksh {(item.price * (item.quantity || 1)).toLocaleString()}</p>
                     </div>
                   ))}
                 </div>
@@ -202,21 +351,26 @@ const Jeans = () => {
             <div className="p-6 text-center space-y-2" onClick={(e) => e.stopPropagation()}>
               <h3 className="text-xl font-bold mb-1">{jean.name}</h3>
               <p className="text-lg font-bold text-blue-600 mb-2">Ksh {jean.price.toLocaleString()}</p>
+              <p className="text-sm text-gray-600 line-clamp-2">{jean.description}</p>
               
               <div className="space-y-2 pt-2">
                 <button
-                  onClick={(e) => { e.stopPropagation(); handlePurchase(jean); }}
+                  onClick={(e) => { e.stopPropagation(); handlePurchase(jean, e); }}
                   className="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2 sm:py-3 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   <CheckCircle className="w-5 h-5" />
                   Purchase Now
                 </button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); handleAddToCart(jean); }}
-                  className="w-full bg-green-600 hover:bg-green-800 text-white font-semibold py-2 sm:py-3 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                  onClick={(e) => { e.stopPropagation(); handleAddToCart(jean, e); }}
+                  className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base ${
+                    isItemInCart(jean.id) 
+                      ? 'bg-green-700 text-white hover:bg-green-800' 
+                      : 'bg-green-600 text-white hover:bg-green-700'
+                  }`}
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  Add to Cart
+                  {isItemInCart(jean.id) ? 'In Cart' : 'Add to Cart'}
                 </button>
               </div>
             </div>

@@ -30,63 +30,105 @@ const LeatherJackets = () => {
       name: 'Leather Jacket - Classic ⭐⭐⭐⭐⭐',
       image: Leather1,
       price: 3500,
-      description: 'Premium quality classic leather jacket with a timeless design. Made from genuine leather for durability and style.'
+      description: 'Premium quality classic leather jacket with a timeless design. Made from genuine leather for durability and style.',
+      category: 'Leather Jackets'
     },
     {
       id: 91,
       name: 'Leather Jacket - Premium ⭐⭐⭐⭐⭐',
       image: Leather2,
       price: 3500,
-      description: 'High-end premium leather jacket with superior craftsmanship. Features a sleek design perfect for any occasion.'
+      description: 'High-end premium leather jacket with superior craftsmanship. Features a sleek design perfect for any occasion.',
+      category: 'Leather Jackets'
     },
     {
       id: 92,
       name: 'Leather Jacket - Modern Fit ⭐⭐⭐⭐⭐',
       image: Leather3,
       price: 3500,
-      description: 'Contemporary modern fit leather jacket with a slim silhouette. Combines style and comfort for the fashion-forward individual.'
+      description: 'Contemporary modern fit leather jacket with a slim silhouette. Combines style and comfort for the fashion-forward individual.',
+      category: 'Leather Jackets'
     },
     {
       id: 93,
       name: 'Leather Jacket - Elegant Fit ⭐⭐⭐⭐⭐',
       image: Leather4,
       price: 3500,
-      description: 'Elegant leather jacket with a sophisticated design. Perfect for those who appreciate refined style and quality materials.'
+      description: 'Elegant leather jacket with a sophisticated design. Perfect for those who appreciate refined style and quality materials.',
+      category: 'Leather Jackets'
     },
   ];
 
-  const handleAddToCart = (item) => {
+  const handleAddToCart = (item, e = null) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    const newItem = {
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      image: item.image,
-      addedAt: new Date().toISOString(),
-    };
-    const updatedCart = [...storedCart, newItem];
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    const existingItemIndex = storedCart.findIndex(cartItem => cartItem.id === item.id);
+    
+    let newCart;
+    if (existingItemIndex >= 0) {
+      // Item already in cart, update quantity
+      newCart = [...storedCart];
+      newCart[existingItemIndex].quantity = (newCart[existingItemIndex].quantity || 1) + 1;
+    } else {
+      // Item not in cart, add new item
+      const newItem = {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        quantity: 1,
+        addedAt: new Date().toISOString(),
+      };
+      newCart = [...storedCart, newItem];
+    }
+    
+    localStorage.setItem('cart', JSON.stringify(newCart));
     window.dispatchEvent(new Event('storage'));
-    alert(`${item.name} added to cart`);
+    
+    alert(`${item.name} ${existingItemIndex >= 0 ? 'quantity updated in' : 'added to'} cart`);
   };
 
-  const handlePurchase = (item) => {
-    // Prepare product data to pass to checkout
-    const productData = {
+  const handlePurchase = (item, e = null) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    // Save the direct purchase to localStorage
+    const purchaseData = {
       id: item.id,
       name: item.name,
       price: item.price,
       image: item.image,
-      description: item.description
+      description: item.description,
+      category: item.category,
+      quantity: 1
     };
     
-    // Navigate to checkout page with product data
-    navigate('/checkout', { state: { product: productData } });
+    localStorage.setItem('directPurchase', JSON.stringify(purchaseData));
+    
+    // Navigate to checkout page with proper state
+    navigate('/checkout', { 
+      state: { 
+        purchaseItem: purchaseData,
+        isDirectPurchase: true 
+      } 
+    });
   };
 
   const cartTotal = () => {
     const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    return storedCart.reduce((sum, item) => sum + item.price, 0);
+    return storedCart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+  };
+
+  // Check if item is in cart
+  const isItemInCart = (itemId) => {
+    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    return storedCart.some(item => item.id === itemId);
   };
 
   const handleProductClick = (item) => {
@@ -141,12 +183,10 @@ const LeatherJackets = () => {
                         </div>
                         <div>
                           <p className="font-semibold text-sm">{item.name}</p>
-                          <p className="text-xs text-gray-500">
-                            Added: {new Date(item.addedAt).toLocaleDateString()}
-                          </p>
+                          <p className="text-xs text-gray-500">Qty: {item.quantity || 1}</p>
                         </div>
                       </div>
-                      <p className="text-sm font-bold">Ksh {item.price.toLocaleString()}</p>
+                      <p className="text-sm font-bold">Ksh {(item.price * (item.quantity || 1)).toLocaleString()}</p>
                     </div>
                   ))}
                 </div>
@@ -209,18 +249,22 @@ const LeatherJackets = () => {
               </h3>
               <p className="text-sm sm:text-lg font-bold text-blue-600">Ksh {leather.price.toLocaleString()}</p>
               <button
-                onClick={() => handlePurchase(leather)}
+                onClick={(e) => handlePurchase(leather, e)}
                 className="w-full bg-gray-800 hover:bg-gray-900 text-white py-2 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 <CheckCircle className="w-5 h-5" />
                 Purchase Now
               </button>
               <button
-                onClick={() => handleAddToCart(leather)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                onClick={(e) => handleAddToCart(leather, e)}
+                className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base ${
+                  isItemInCart(leather.id) 
+                    ? 'bg-green-700 text-white hover:bg-green-800' 
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
               >
                 <ShoppingCart className="w-5 h-5" />
-                Add to Cart
+                {isItemInCart(leather.id) ? 'In Cart' : 'Add to Cart'}
               </button>
             </div>
           </div>

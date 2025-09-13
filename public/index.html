@@ -2,42 +2,197 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!-- Circular browser tab icon with increased size -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23000000'/><text x='50' y='60' font-family='Arial' font-size='30' text-anchor='middle' fill='%23ffffff'>A</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="Sir Apollo Men's Wear - Premium quality suits and men's clothing"
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
+    <!-- Circular browser tab icons for different devices with increased size -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23000000'/><text x='50' y='60' font-family='Arial' font-size='30' text-anchor='middle' fill='%23ffffff'>A</text></svg>">
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
+    <title>SirApollo-MenWear</title>
+    <style>
+      /* Reset default margins and padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      /* Ensure html and body take full height */
+      html, body {
+        height: 100%;
+        width: 100%;
+        overflow-x: hidden;
+      }
+      
+      /* Loading styles - will be replaced by React app */
+      #root {
+        min-height: 100vh;
+        width: 100%;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+      }
+      
+      .loading-container {
+        text-align: center;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      
+      .logo-container {
+        margin-bottom: 40px;
+      }
+      
+      .circular-logo {
+        width: 160px; /* Increased from 120px */
+        height: 160px; /* Increased from 120px */
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #ecf0f1; /* Thicker border */
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.08); } /* Slightly stronger pulse */
+        100% { transform: scale(1); }
+      }
+      
+      .loading-spinner {
+        border: 5px solid rgba(255, 255, 255, 0.1); /* Thicker border */
+        border-top: 5px solid #3498db; /* Thicker border */
+        border-radius: 50%;
+        width: 70px; /* Increased from 60px */
+        height: 70px; /* Increased from 60px */
+        animation: spin 1s linear infinite;
+        margin: 0 auto 25px;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .loading-text {
+        font-size: 2rem; /* Increased from 1.8rem */
+        color: #ecf0f1;
+        margin-top: 25px; /* Increased from 20px */
+        font-weight: 600; /* Bolder */
+        letter-spacing: 1.5px; /* Slightly more spacing */
+      }
+      
+      .progress-text {
+        margin-top: 25px; /* Increased from 20px */
+        color: #bdc3c7;
+        font-size: 1.1rem; /* Slightly larger */
+      }
+      
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .circular-logo {
+          width: 140px; /* Increased from 120px */
+          height: 140px; /* Increased from 120px */
+        }
+        
+        .loading-spinner {
+          width: 60px; /* Increased from 50px */
+          height: 60px; /* Increased from 50px */
+        }
+        
+        .loading-text {
+          font-size: 1.7rem; /* Increased from 1.5rem */
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .circular-logo {
+          width: 120px; /* Increased from 100px */
+          height: 120px; /* Increased from 100px */
+        }
+        
+        .loading-spinner {
+          width: 50px; /* Increased from 40px */
+          height: 50px; /* Increased from 40px */
+        }
+        
+        .loading-text {
+          font-size: 1.5rem; /* Increased from 1.3rem */
+        }
+      }
+    </style>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <noscript>
+      <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+        <h2>JavaScript Required</h2>
+        <p>You need to enable JavaScript to run this app.</p>
+      </div>
+    </noscript>
+    <div id="root">
+      <div class="loading-container">
+        <div class="logo-container">
+          <img src="%PUBLIC_URL%/logo.jpg" alt="Sir Apollo Men's Wear" class="circular-logo">
+        </div>
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading Sir Apollo Men's Wear</p>
+        <p class="progress-text">Welcome and Experience Amazing Offers...</p>
+      </div>
+    </div>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    <script>
+      // Simple script to redirect after 4 seconds
+      setTimeout(function() {
+        // This would typically redirect to your main app
+        console.log("Loading complete. Redirecting to main app...");
+        // window.location.href = "/main-app"; // Uncomment this in production
+      }, 4000);
+      
+      // Function to create a circular version of the logo for the browser tab
+      function createCircularFavicon() {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const size = 64; // Increased size for browser tab
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          
+          // Create circular clipping path
+          ctx.beginPath();
+          ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+          ctx.closePath();
+          ctx.clip();
+          
+          // Draw the image
+          ctx.drawImage(img, 0, 0, size, size);
+          
+          // Replace the favicon
+          const link = document.querySelector("link[rel*='icon']");
+          if (link) {
+            link.href = canvas.toDataURL('image/png');
+          }
+        };
+        img.onerror = function() {
+          console.log("Could not load logo image for favicon");
+        };
+        img.src = '%PUBLIC_URL%/logo.jpg';
+      }
+      
+      // Create circular favicon when page loads
+      document.addEventListener('DOMContentLoaded', createCircularFavicon);
+    </script>
   </body>
 </html>
